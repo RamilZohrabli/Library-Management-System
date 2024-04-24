@@ -17,3 +17,22 @@ public class UserAdmin extends JFrame {
       
         userDatabase = new HashMap<>();
         userDatabase.put("admin", "admin");
+registerButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String username = usernameField.getText();
+                String password = String.valueOf(passwordField.getPassword());
+
+                if (username.trim().isEmpty() || password.trim().isEmpty()) {
+                    JOptionPane.showMessageDialog(UserAdmin.this, "Username and password cannot be empty.");
+                } else if (userDatabase.containsKey(username)) {
+                    JOptionPane.showMessageDialog(UserAdmin.this, "Username already exists.");
+                } else {
+                    userDatabase.put(username, password);
+                    saveUsersToFile(); // Save new user to file
+                    JOptionPane.showMessageDialog(UserAdmin.this, "Registration successful!");
+                    // Automatically log in the newly registered user
+                    // Open the main application window for the user
+                }
+            }
+        });
