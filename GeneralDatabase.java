@@ -18,6 +18,7 @@ public class GeneralDatabase{
         }
         this.reviews = new ArrayList<>();
     }
+    //Getter methods
     public String getTitle(){
         return title;
     }
@@ -30,5 +31,6 @@ public class GeneralDatabase{
     public int getcountRating(){
         return countRating;
     }
+    
 
 }
