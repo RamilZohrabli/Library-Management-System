@@ -18,4 +18,17 @@ public class GeneralDatabase{
         }
         this.reviews = new ArrayList<>();
     }
+    public String getTitle(){
+        return title;
+    }
+    public String getAuthor(){
+        return author;
+    }
+    public double getAverageRating(){
+        return averageRating;
+    }
+    public int getcountRating(){
+        return countRating;
+    }
+
 }
