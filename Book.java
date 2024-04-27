@@ -23,4 +23,32 @@ public class Book {
         this.averageRating = null;
         this.userReviews = new ArrayList<>();
     }
+    //Getters and Setters
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public Float getAverageRating() {
+        return averageRating;
+    }
+
+    public void setAverageRating(Float averageRating) {
+        this.averageRating = averageRating;
+    }
+
+    public List<String> getUserReviews() {
+        return userReviews;
+    }
 }
