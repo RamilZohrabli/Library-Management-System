@@ -1,0 +1,87 @@
+@startuml Book Management Application
+
+class Book {
+  - title: String
+  - author: String
+  - userRatings: List<Integer>
+  - userReviews: List<String>
+  + getTitle(): String
+  + getAuthor(): String
+  + getAverageRating(): double
+  + addRating(rating: int)
+  + addReview(review: String)
+}
+
+class GeneralDatabase {
+  - books: List<Book>
+  + addBook(book: Book)
+  + removeBook(title: String)
+  + getBook(title: String): Book
+  + filterBooksByAuthor(author: String): List<Book>
+  + sortBooksBy(column: String, ascending: boolean): List<Book>
+  + importBooksFromCSV(filePath: String): void
+}
+
+class PersonalBook {
+  - book: Book
+  - status: String
+  - timeSpent: int
+  - startDate: LocalDate
+  - endDate: LocalDate
+  - userRatings: List<Integer>
+  - userReviews: List<String>
+  + setStatus(status: String)
+  + setTimeSpent(time: int)
+  + setStartDate(date: LocalDate)
+  + setEndDate(date: LocalDate)
+  + addRating(rating: int)
+  + addReview(review: String)
+}
+
+class PersonalDatabase {
+  - books: List<PersonalBook>
+  + addPersonalBook(personalBook: PersonalBook)
+  + getPersonalBook(title: String): PersonalBook
+  + removePersonalBook(title: String)
+  + filterPersonalBooksByStatus(status: String): List<PersonalBook>
+  + sortPersonalBooksBy(column: String, ascending: boolean): List<PersonalBook>
+}
+
+class User {
+  - username: String
+  - password: String
+  - personalDatabase: PersonalDatabase
+  + register(username: String, password: String)
+  + login(username: String, password: String): boolean
+  + addBookToPersonalDatabase(book: Book)
+  + removeBookFromPersonalDatabase(title: String)
+}
+
+class Admin {
+  - username: String
+  - password: String
+  + login(username: String, password: String): boolean
+  + addBookToGeneralDatabase(generalDatabase: GeneralDatabase, book: Book)
+  + removeBookFromGeneralDatabase(generalDatabase: GeneralDatabase, title: String)
+  + modifyGeneralBook(generalDatabase: GeneralDatabase, title: String, newBook: Book)
+}
+
+class LoginAndRegistrationPage {
+  - userDatabase: Map<String, String>
+  - adminCredentials: Map<String, String>
+  + login(username: String, password: String): boolean
+  + register(username: String, password: String): boolean
+  + loadUsersFromFile()
+  + saveUsersToFile()
+  + displayUserList()
+}
+
+GeneralDatabase "1" *-- "many" Book
+PersonalDatabase "1" *-- "many" PersonalBook
+PersonalBook "1" -- "1" Book
+User "1" -- "1" PersonalDatabase
+Admin "1" -- "1" GeneralDatabase
+LoginAndRegistrationPage -- User
+LoginAndRegistrationPage -- Admin
+
+@enduml
