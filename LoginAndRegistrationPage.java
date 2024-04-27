@@ -9,6 +9,7 @@ import java.util.Map;
 public class LoginAndRegistrationPage extends JFrame {
 
     private Map<String, String> userDatabase; // Simulated user database
+    private Map<String, String> adminCredentials; // Admin credentials
 
     private JTextField usernameField;
     private JPasswordField passwordField;
@@ -20,9 +21,12 @@ public class LoginAndRegistrationPage extends JFrame {
 
         // Initialize user database
         userDatabase = new HashMap<>();
-
         // Load existing users from file
         loadUsersFromFile();
+
+        // Initialize admin credentials
+        adminCredentials = new HashMap<>();
+        adminCredentials.put("admin", "admin");
 
         // Components
         JLabel titleLabel = new JLabel("Login or Register");
@@ -57,9 +61,12 @@ public class LoginAndRegistrationPage extends JFrame {
                 String username = usernameField.getText();
                 String password = String.valueOf(passwordField.getPassword());
 
-                if (userDatabase.containsKey(username) && userDatabase.get(username).equals(password)) {
-                    JOptionPane.showMessageDialog(LoginAndRegistrationPage.this, "Login successful!");
-                    // Open the main application window for the user
+                if (adminCredentials.containsKey(username) && adminCredentials.get(username).equals(password)) {
+                    JOptionPane.showMessageDialog(LoginAndRegistrationPage.this, "Admin login successful!");
+                    // Provide admin functionality
+                } else if (userDatabase.containsKey(username) && userDatabase.get(username).equals(password)) {
+                    JOptionPane.showMessageDialog(LoginAndRegistrationPage.this, "User login successful!");
+                    // Provide regular user functionality
                 } else {
                     JOptionPane.showMessageDialog(LoginAndRegistrationPage.this, "Invalid username or password.");
                 }
