@@ -36,3 +36,17 @@ registerButton.addActionListener(new ActionListener() {
                 }
             }
         });
+    private void loadUsersFromFile() {
+        try (BufferedReader reader = new BufferedReader(new FileReader(USER_FILE))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length == 2) {
+                    userDatabase.put(parts[0], parts[1]);
+                }
+            }
+        } catch (IOException e) {
+            // Handle file read error
+            e.printStackTrace();
+        }
+    }
