@@ -51,4 +51,9 @@ public class Book {
     public List<String> getUserReviews() {
         return userReviews;
     }
+    //Adding Review
+    public void addUserReview(String review) {
+        userReviews.add(review);
+    }
+
 }
