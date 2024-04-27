@@ -41,9 +41,10 @@ public class LoginAndRegistrationPage extends JFrame {
 
         JButton loginButton = new JButton("Login");
         JButton registerButton = new JButton("Register");
+        JButton viewUsersButton = new JButton("View Users");
 
         // Layout
-        JPanel panel = new JPanel(new GridLayout(4, 2, 10, 10));
+        JPanel panel = new JPanel(new GridLayout(5, 2, 10, 10));
         panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         panel.add(titleLabel);
         panel.add(new JLabel());
@@ -53,6 +54,7 @@ public class LoginAndRegistrationPage extends JFrame {
         panel.add(passwordField);
         panel.add(loginButton);
         panel.add(registerButton);
+        panel.add(viewUsersButton);
 
         // Actions
         loginButton.addActionListener(new ActionListener() {
@@ -93,10 +95,21 @@ public class LoginAndRegistrationPage extends JFrame {
             }
         });
 
+        viewUsersButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (isAdminLoggedIn()) {
+                    displayUserList();
+                } else {
+                    JOptionPane.showMessageDialog(LoginAndRegistrationPage.this, "You need admin privileges to view users.");
+                }
+            }
+        });
+
         // Frame setup
         add(panel);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(300, 200);
+        setSize(300, 250);
         setLocationRelativeTo(null);
         setVisible(true);
     }
@@ -135,5 +148,21 @@ public class LoginAndRegistrationPage extends JFrame {
             // Handle file write error
             e.printStackTrace();
         }
+    }
+
+    private void displayUserList() {
+        StringBuilder userList = new StringBuilder("Registered Users:\n");
+        for (Map.Entry<String, String> entry : userDatabase.entrySet()) {
+            userList.append(entry.getKey()).append("\n");
+        }
+        JTextArea userListArea = new JTextArea(userList.toString());
+        JScrollPane scrollPane = new JScrollPane(userListArea);
+        JOptionPane.showMessageDialog(LoginAndRegistrationPage.this, scrollPane, "Registered Users", JOptionPane.PLAIN_MESSAGE);
+    }
+
+    private boolean isAdminLoggedIn() {
+        String username = usernameField.getText();
+        String password = String.valueOf(passwordField.getPassword());
+        return adminCredentials.containsKey(username) && adminCredentials.get(username).equals(password);
     }
 }
