@@ -4,8 +4,6 @@ class Book {
   +author: String
   +average_rating: Float
   +user_reviews: List<String>
-  +get_average_rating(): Float
-  +get_reviews(): List<String>
 }
 
 class User {
