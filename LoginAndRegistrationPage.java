@@ -50,3 +50,14 @@ registerButton.addActionListener(new ActionListener() {
             e.printStackTrace();
         }
     }
+        private void saveUsersToFile() {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(USER_FILE, true))) {
+            for (Map.Entry<String, String> entry : userDatabase.entrySet()) {
+                writer.write(entry.getKey() + "," + entry.getValue());
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            // Handle file write error
+            e.printStackTrace();
+        }
+    }
