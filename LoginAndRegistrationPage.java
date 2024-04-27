@@ -2,40 +2,107 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
-public class UserAdmin extends JFrame {
+public class LoginAndRegistrationPage extends JFrame {
 
-    private Map<String, String> userDatabase; 
+    private Map<String, String> userDatabase; // Simulated user database
 
     private JTextField usernameField;
     private JPasswordField passwordField;
 
-    public UserAdmin() {
+    private static final String USER_FILE = "users.txt";
+
+    public LoginAndRegistrationPage() {
         super("Login & Registration");
-      
+
+        // Initialize user database
         userDatabase = new HashMap<>();
-        userDatabase.put("admin", "admin");
-registerButton.addActionListener(new ActionListener() {
+
+        // Load existing users from file
+        loadUsersFromFile();
+
+        // Components
+        JLabel titleLabel = new JLabel("Login or Register");
+        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
+
+        JLabel usernameLabel = new JLabel("Username:");
+        usernameField = new JTextField(15);
+
+        JLabel passwordLabel = new JLabel("Password:");
+        passwordField = new JPasswordField(15);
+
+        JButton loginButton = new JButton("Login");
+        JButton registerButton = new JButton("Register");
+
+        // Layout
+        JPanel panel = new JPanel(new GridLayout(4, 2, 10, 10));
+        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        panel.add(titleLabel);
+        panel.add(new JLabel());
+        panel.add(usernameLabel);
+        panel.add(usernameField);
+        panel.add(passwordLabel);
+        panel.add(passwordField);
+        panel.add(loginButton);
+        panel.add(registerButton);
+
+        // Actions
+        loginButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String username = usernameField.getText();
+                String password = String.valueOf(passwordField.getPassword());
+
+                if (userDatabase.containsKey(username) && userDatabase.get(username).equals(password)) {
+                    JOptionPane.showMessageDialog(LoginAndRegistrationPage.this, "Login successful!");
+                    // Open the main application window for the user
+                } else {
+                    JOptionPane.showMessageDialog(LoginAndRegistrationPage.this, "Invalid username or password.");
+                }
+            }
+        });
+
+        registerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String username = usernameField.getText();
                 String password = String.valueOf(passwordField.getPassword());
 
                 if (username.trim().isEmpty() || password.trim().isEmpty()) {
-                    JOptionPane.showMessageDialog(UserAdmin.this, "Username and password cannot be empty.");
+                    JOptionPane.showMessageDialog(LoginAndRegistrationPage.this, "Username and password cannot be empty.");
                 } else if (userDatabase.containsKey(username)) {
-                    JOptionPane.showMessageDialog(UserAdmin.this, "Username already exists.");
+                    JOptionPane.showMessageDialog(LoginAndRegistrationPage.this, "Username already exists.");
                 } else {
                     userDatabase.put(username, password);
                     saveUsersToFile(); // Save new user to file
-                    JOptionPane.showMessageDialog(UserAdmin.this, "Registration successful!");
+                    JOptionPane.showMessageDialog(LoginAndRegistrationPage.this, "Registration successful!");
                     // Automatically log in the newly registered user
                     // Open the main application window for the user
                 }
             }
         });
+
+        // Frame setup
+        add(panel);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(300, 200);
+        setLocationRelativeTo(null);
+        setVisible(true);
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                new LoginAndRegistrationPage();
+            }
+        });
+    }
+
     private void loadUsersFromFile() {
         try (BufferedReader reader = new BufferedReader(new FileReader(USER_FILE))) {
             String line;
@@ -50,7 +117,8 @@ registerButton.addActionListener(new ActionListener() {
             e.printStackTrace();
         }
     }
-        private void saveUsersToFile() {
+
+    private void saveUsersToFile() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(USER_FILE, true))) {
             for (Map.Entry<String, String> entry : userDatabase.entrySet()) {
                 writer.write(entry.getKey() + "," + entry.getValue());
@@ -61,3 +129,4 @@ registerButton.addActionListener(new ActionListener() {
             e.printStackTrace();
         }
     }
+}
