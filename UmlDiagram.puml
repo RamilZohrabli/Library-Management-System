@@ -1,0 +1,28 @@
+@startuml Book Management Application
+class Book {
+  +title: String
+  +author: String
+  +average_rating: Float
+  +user_reviews: List<String>
+  +get_average_rating(): Float
+  +get_reviews(): List<String>
+}
+
+class User {
+  +username: String
+  +password: String
+  +personal_books: List<PersonalBook>
+}
+
+class PersonalBook {
+  +status: String
+  +time_spent: Integer
+  +start_date: Date
+  +end_date: Date
+  +user_rating: Integer
+  +user_review: String
+}
+
+Book "1" <|-- "*" PersonalBook : "Associated With"
+User "1" <|-- "*" PersonalBook : "Has"
+@enduml
