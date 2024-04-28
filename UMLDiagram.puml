@@ -1,87 +1,107 @@
 @startuml Book Management Application
-
-class Book {
+class GeneralBook {
   - title: String
   - author: String
-  - userRatings: List<Integer>
-  - userReviews: List<String>
+  - averageRating: double
+  - ratingCount: int
+  - reviews: List<String>
   + getTitle(): String
   + getAuthor(): String
   + getAverageRating(): double
-  + addRating(rating: int)
-  + addReview(review: String)
+  + getRatingCount(): int
+  + getReviews(): List<String>
+  + addRating(rating: double): void
+  + addReview(review: String): void
 }
 
 class GeneralDatabase {
-  - books: List<Book>
-  + addBook(book: Book)
-  + removeBook(title: String)
-  + getBook(title: String): Book
-  + filterBooksByAuthor(author: String): List<Book>
-  + sortBooksBy(column: String, ascending: boolean): List<Book>
-  + importBooksFromCSV(filePath: String): void
+  - books: List<GeneralBook>
+  + GeneralDatabase()
+  + loadFromCSV(filePath: String): void
+  + getBooks(): List<GeneralBook>
+  + addBook(book: GeneralBook): void
+  + removeBook(title: String): void
+}
+
+class GeneralDatabaseGUI {
+  - table: JTable
+  - tableModel: DefaultTableModel
+  + GeneralDatabaseGUI(database: GeneralDatabase)
+  + populateTable(books: List<GeneralBook>): void
 }
 
 class PersonalBook {
-  - book: Book
   - status: String
   - timeSpent: int
-  - startDate: LocalDate
-  - endDate: LocalDate
-  - userRatings: List<Integer>
+  - startDate: String
+  - endDate: String
+  - userRatings: List<Double>
   - userReviews: List<String>
-  + setStatus(status: String)
-  + setTimeSpent(time: int)
-  + setStartDate(date: LocalDate)
-  + setEndDate(date: LocalDate)
-  + addRating(rating: int)
-  + addReview(review: String)
+  + PersonalBook(title: String, author: String)
+  + getStatus(): String
+  + setStatus(status: String): void
+  + getTimeSpent(): int
+  + addTimeSpent(time: int): void
+  + getStartDate(): String
+  + setStartDate(date: String): void
+  + getEndDate(): String
+  + setEndDate(date: String): void
+  + getUserRatings(): List<Double>
+  + getUserReviews(): List<String>
+  + addUserRating(rating: double): void
+  + addUserReview(review: String): void
 }
 
 class PersonalDatabase {
-  - books: List<PersonalBook>
-  + addPersonalBook(personalBook: PersonalBook)
+  - personalBooks: List<PersonalBook>
+  + PersonalDatabase()
+  + getPersonalBooks(): List<PersonalBook>
+  + addPersonalBook(book: PersonalBook): void
+  + removePersonalBook(title: String): void
   + getPersonalBook(title: String): PersonalBook
-  + removePersonalBook(title: String)
-  + filterPersonalBooksByStatus(status: String): List<PersonalBook>
-  + sortPersonalBooksBy(column: String, ascending: boolean): List<PersonalBook>
+}
+
+class PersonalDatabaseGUI {
+  - personalTable: JTable
+  - personalTableModel: DefaultTableModel
+  + PersonalDatabaseGUI(database: PersonalDatabase)
+  + populatePersonalTable(books: List<PersonalBook>): void
 }
 
 class User {
   - username: String
   - password: String
   - personalDatabase: PersonalDatabase
-  + register(username: String, password: String)
+  + register(username: String, password: String): void
   + login(username: String, password: String): boolean
-  + addBookToPersonalDatabase(book: Book)
-  + removeBookFromPersonalDatabase(title: String)
+  + addBookToPersonalDatabase(book: PersonalBook): void
+  + removeBookFromPersonalDatabase(title: String): void
 }
 
 class Admin {
   - username: String
   - password: String
   + login(username: String, password: String): boolean
-  + addBookToGeneralDatabase(generalDatabase: GeneralDatabase, book: Book)
-  + removeBookFromGeneralDatabase(generalDatabase: GeneralDatabase, title: String)
-  + modifyGeneralBook(generalDatabase: GeneralDatabase, title: String, newBook: Book)
+  + addBookToGeneralDatabase(generalDatabase: GeneralDatabase, book: GeneralBook): void
+  + removeBookFromGeneralDatabase(generalDatabase: GeneralDatabase, title: String): void
 }
 
 class LoginAndRegistrationPage {
   - userDatabase: Map<String, String>
   - adminCredentials: Map<String, String>
   + login(username: String, password: String): boolean
-  + register(username: String, password: String): boolean
-  + loadUsersFromFile()
-  + saveUsersToFile()
-  + displayUserList()
+  + register(username: String, password: String): void
+  + loadUsersFromFile(): void
+  + saveUsersToFile(): void
 }
 
-GeneralDatabase "1" *-- "many" Book
+GeneralDatabase "1" *-- "many" GeneralBook
 PersonalDatabase "1" *-- "many" PersonalBook
-PersonalBook "1" -- "1" Book
+PersonalBook "1" -- "1" GeneralBook
 User "1" -- "1" PersonalDatabase
+GeneralDatabaseGUI "1" -- "1" GeneralDatabase
+PersonalDatabaseGUI "1" -- "1" PersonalDatabase
 Admin "1" -- "1" GeneralDatabase
-LoginAndRegistrationPage -- User
-LoginAndRegistrationPage -- Admin
-
+LoginAndRegistrationPage -- "1" Admin
+LoginAndRegistrationPage -- "1..*" User
 @enduml
