@@ -49,4 +49,8 @@ public class GeneralBook{
             reviews.add(review);
         }
     }
+    //Rating adding
+    public void addRating(double rating) {
+        averageRating = (averageRating * ratingCount + rating) / (++ratingCount);
+    }
 }
