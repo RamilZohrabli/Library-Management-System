@@ -22,6 +22,20 @@ public class GeneralBook{
         this.ratingCount = 0;
         this.reviews = new ArrayList<>();
     }
-    
+    // Getters 
+    public String getTitle() {
+        return title;
+    }
 
+    public String getAuthor() {
+        return author;
+    }
+
+    public double getAverageRating() {
+        return (ratingCount > 0) ? averageRating : -1; // -1 for "No rating"
+    }
+
+    public int getRatingCount() {
+        return ratingCount;
+    }
 }
