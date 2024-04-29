@@ -28,4 +28,7 @@ public class GeneralDatabase{
             e.printStackTrace(); // Exception handling
         }
     }
+    public List<GeneralBook> getBooks() {
+        return books;
+    }
 }
