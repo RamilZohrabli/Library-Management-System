@@ -32,7 +32,12 @@ public class GeneralBook{
     }
 
     public double getAverageRating() {
-        return (ratingCount > 0) ? averageRating : -1; // -1 for "No rating"
+        if(ratingCount>0){
+            return averageRating;
+        }
+        else{
+            return -1; // -1 for "No rating"
+        }
     }
 
     public int getRatingCount() {
