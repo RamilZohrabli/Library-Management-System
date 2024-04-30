@@ -43,6 +43,9 @@ public class GeneralBook{
     public int getRatingCount() {
         return ratingCount;
     }
+    public List<String> getReviews() {
+        return new ArrayList<>(reviews); 
+    }
     //Review adding
     public void addReview(String review) {
         if (review != null && !review.isEmpty()) {
