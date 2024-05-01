@@ -6,6 +6,7 @@ import java.util.List;
 
 public class GeneralDatabaseGUI extends JFrame {
     private JTable table;
+    @SuppressWarnings("unused")
     private GeneralDatabase database;
 
     public GeneralDatabaseGUI(GeneralDatabase database) {
