@@ -5,12 +5,10 @@ import java.util.List;
 
 public class GeneralDatabaseGUI extends JFrame {
     private JTable table;
-    private GeneralDatabase generalDatabase; // Reference to the general database
     private PersonalDatabase personalDatabase; // Reference to the personal database
     private JButton addToPersonalLibraryButton; // Button to add a book to the personal library
 
     public GeneralDatabaseGUI(GeneralDatabase generalDatabase, PersonalDatabase personalDatabase) {
-        this.generalDatabase = generalDatabase;
         this.personalDatabase = personalDatabase;
 
         setTitle("General Database");
