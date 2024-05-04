@@ -1,18 +1,24 @@
 import javax.swing.*;
 import java.awt.*;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainApp {
     private GeneralDatabase generalDatabase;
     private PersonalDatabase personalDatabase;
+    private static final String PERSONAL_BOOKS_FILE = "personal_books.txt";
 
     public MainApp() {
         generalDatabase = new GeneralDatabase();
-        generalDatabase.loadFromCSV("brodsky.csv"); // Load books from CSV
+        generalDatabase.loadFromCSV("brodsky.csv"); // Load general database from CSV
 
         personalDatabase = new PersonalDatabase(); // User's personal library
+        personalDatabase.loadFromFile(PERSONAL_BOOKS_FILE); // Load personal database from file
 
         initializeLoginPage(); // Start with login/registration
+
+        // Save personal database on exit
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> personalDatabase.saveToFile(PERSONAL_BOOKS_FILE)));
     }
 
     private void initializeLoginPage() {
@@ -32,8 +38,8 @@ public class MainApp {
     private void openMainInterface() {
         MainInterface mainInterface = new MainInterface();
 
-        mainInterface.setGeneralDatabaseListener(() -> new GeneralDatabaseGUI(generalDatabase, personalDatabase)); // Pass personal database
-        mainInterface.setPersonalDatabaseListener(() -> new PersonalDatabaseGUI(personalDatabase)); // Pass personal database
+        mainInterface.setGeneralDatabaseListener(() -> new GeneralDatabaseGUI(generalDatabase, personalDatabase));
+        mainInterface.setPersonalDatabaseListener(() -> new PersonalDatabaseGUI(personalDatabase));
         mainInterface.setLogoutListener(() -> {
             mainInterface.dispose(); // Close the main interface
             initializeLoginPage(); // Return to login/registration
@@ -59,7 +65,7 @@ public class MainApp {
                     .append("\n");
         }
 
-        JScrollPane scrollPane = new JScrollPane(userTextArea); // Corrected
+        JScrollPane scrollPane = new JScrollPane(userTextArea); 
         adminFrame.add(scrollPane);
 
         adminFrame.setVisible(true);
