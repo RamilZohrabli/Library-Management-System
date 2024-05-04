@@ -3,20 +3,16 @@ import java.awt.*;
 import java.util.*;
 
 public class MainApp {
-    private GeneralDatabase generalDatabase; // General book database
-    private PersonalDatabase personalDatabase; // Personal book database
-    @SuppressWarnings("unused")
-    private static final String USER_FILE = "users.txt"; // Path to the user data file
+    private GeneralDatabase generalDatabase;
+    private PersonalDatabase personalDatabase;
 
     public MainApp() {
-        // Initialize databases
         generalDatabase = new GeneralDatabase();
-        generalDatabase.loadFromCSV("brodsky.csv"); // Load books from CSV file
+        generalDatabase.loadFromCSV("brodsky.csv"); // Load books from CSV
 
-        personalDatabase = new PersonalDatabase();
+        personalDatabase = new PersonalDatabase(); // User's personal library
 
-        // Start with the login/registration page
-        initializeLoginPage();
+        initializeLoginPage(); // Start with login/registration
     }
 
     private void initializeLoginPage() {
@@ -36,9 +32,8 @@ public class MainApp {
     private void openMainInterface() {
         MainInterface mainInterface = new MainInterface();
 
-        // Ensure `MainInterface` has these methods defined
-        mainInterface.setGeneralDatabaseListener(() -> new GeneralDatabaseGUI(generalDatabase));
-        mainInterface.setPersonalDatabaseListener(() -> new PersonalDatabaseGUI(personalDatabase));
+        mainInterface.setGeneralDatabaseListener(() -> new GeneralDatabaseGUI(generalDatabase, personalDatabase)); // Pass personal database
+        mainInterface.setPersonalDatabaseListener(() -> new PersonalDatabaseGUI(personalDatabase)); // Pass personal database
         mainInterface.setLogoutListener(() -> {
             mainInterface.dispose(); // Close the main interface
             initializeLoginPage(); // Return to login/registration
@@ -48,7 +43,6 @@ public class MainApp {
     }
 
     private void openAdminPage() {
-        // This method requires a reference to the `userDatabase`
         JFrame adminFrame = new JFrame("Admin Panel");
         adminFrame.setSize(400, 300);
         adminFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -58,18 +52,16 @@ public class MainApp {
         userTextArea.setEditable(false);
         userTextArea.setFont(new Font("Verdana", Font.PLAIN, 14));
 
-        // Ensure `userDatabase` is defined in the context
         StringBuilder userList = new StringBuilder("Registered Users:\n");
         for (Map.Entry<String, String> entry : new HashMap<String, String>().entrySet()) {
             userList.append("Username: ").append(entry.getKey())
                     .append(", Password: ").append(entry.getValue())
                     .append("\n");
         }
-        
-        userTextArea.setText(userList.toString());
 
-        JScrollPane scrollPane = new JScrollPane(userTextArea);
+        JScrollPane scrollPane = new JScrollPane(userTextArea); // Corrected
         adminFrame.add(scrollPane);
+
         adminFrame.setVisible(true);
     }
 

@@ -1,54 +1,34 @@
 import javax.swing.*;
-import javax.swing.table.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.*;
 import java.util.List;
 
 public class GeneralDatabaseGUI extends JFrame {
     private JTable table;
-    @SuppressWarnings("unused")
-    private GeneralDatabase database;
+    private GeneralDatabase generalDatabase; // Reference to the general database
+    private PersonalDatabase personalDatabase; // Reference to the personal database
+    private JButton addToPersonalLibraryButton; // Button to add a book to the personal library
 
-    public GeneralDatabaseGUI(GeneralDatabase database) {
-        this.database = database;
+    public GeneralDatabaseGUI(GeneralDatabase generalDatabase, PersonalDatabase personalDatabase) {
+        this.generalDatabase = generalDatabase;
+        this.personalDatabase = personalDatabase;
 
         setTitle("General Database");
         setSize(800, 600);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Change from EXIT_ON_CLOSE to avoid closing the main app
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        // Create a DefaultTableModel that is read-only
-        table = new JTable(new DefaultTableModel(new Object[]{"Title", "Author", "Rating", "Reviews"}, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false; // All cells are non-editable
-            }
-        });
+        table = new JTable(new DefaultTableModel(new Object[]{"Title", "Author", "Rating", "Reviews"}, 0));
+        populateTable(generalDatabase.getBooks());
 
-        populateTable(database.getBooks());
+        addToPersonalLibraryButton = new JButton("Add to Personal Library");
+        addToPersonalLibraryButton.addActionListener(e -> addBookToPersonalLibrary());
 
-        // Adding a mouse listener for interactions with the table
-        table.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                int row = table.rowAtPoint(e.getPoint());
-                int col = table.columnAtPoint(e.getPoint());
+        JPanel bottomPanel = new JPanel();
+        bottomPanel.add(addToPersonalLibraryButton);
 
-                if (col == 3) { // Reviews column
-                    String reviews = (String) table.getValueAt(row, col);
-                    if (!reviews.equals("No reviews")) {
-                        JOptionPane.showMessageDialog(
-                            GeneralDatabaseGUI.this,
-                            "Reviews: " + reviews,
-                            "Review Details",
-                            JOptionPane.INFORMATION_MESSAGE
-                        );
-                    }
-                }
-            }
-        });
-
-        add(new JScrollPane(table), BorderLayout.CENTER);
+        add(new JScrollPane(table), BorderLayout.CENTER); // Corrected
+        add(bottomPanel, BorderLayout.SOUTH);
 
         setVisible(true);
     }
@@ -56,10 +36,12 @@ public class GeneralDatabaseGUI extends JFrame {
     private void populateTable(List<GeneralBook> books) {
         DefaultTableModel model = (DefaultTableModel) table.getModel();
         model.setRowCount(0); // Clear existing rows
+
         for (GeneralBook book : books) {
-            String reviews = book.getReviews().isEmpty() ? "No reviews" : String.join(", ", book.getReviews());
             double rating = book.getAverageRating();
             String ratingStr = (rating == -1) ? "No rating" : String.format("%.2f (%d)", rating, book.getRatingCount());
+
+            String reviews = book.getReviews().isEmpty() ? "No reviews" : String.join(", ", book.getReviews());
 
             model.addRow(new Object[]{
                 book.getTitle(),
@@ -68,5 +50,21 @@ public class GeneralDatabaseGUI extends JFrame {
                 reviews
             });
         }
+    }
+
+    private void addBookToPersonalLibrary() {
+        int selectedRow = table.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Please select a book to add to your personal library.");
+            return;
+        }
+
+        String title = (String) table.getValueAt(selectedRow, 0);
+        String author = (String) table.getValueAt(selectedRow, 1);
+
+        PersonalBook personalBook = new PersonalBook(title, author);
+        personalDatabase.addPersonalBook(personalBook);
+
+        JOptionPane.showMessageDialog(this, "Book added to your personal library.");
     }
 }
