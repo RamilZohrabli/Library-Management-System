@@ -5,7 +5,7 @@ import java.time.LocalTime;
 import java.util.*;
 import java.util.Timer;
 
-public class BookLibraryApplication extends JFrame {
+public class Main extends JFrame {
     private JTextField usernameField;
     private JPasswordField passwordField;
     private Map<String, String> userDatabase;
@@ -16,7 +16,7 @@ public class BookLibraryApplication extends JFrame {
     private static final Color MORNING_COLOR = new Color(255, 230, 168);
     private static final Color EVENING_COLOR = new Color(91, 91, 91);
 
-    public BookLibraryApplication() {
+    public Main() {
         userDatabase = new HashMap<>();
         loadUsersFromFile();
         adminCredentials = new HashMap<>();
@@ -203,6 +203,6 @@ public class BookLibraryApplication extends JFrame {
     
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new BookLibraryApplication());
+        SwingUtilities.invokeLater(() -> new Main());
     }
 }
