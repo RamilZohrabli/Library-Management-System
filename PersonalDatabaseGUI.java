@@ -11,7 +11,7 @@ public class PersonalDatabaseGUI extends JFrame {
         setTitle("Personal Database");
         setSize(800, 600);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         personalTableModel = new DefaultTableModel();
         personalTableModel.addColumn("Title");
         personalTableModel.addColumn("Author");
