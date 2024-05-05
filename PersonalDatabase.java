@@ -3,13 +3,19 @@ import java.util.*;
 
 public class PersonalDatabase {
     private List<PersonalBook> personalBooks;
+    private String currentUser; // The current user name
 
     public PersonalDatabase() {
         personalBooks = new ArrayList<>();
+        currentUser = ""; // Default user name
     }
 
     public List<PersonalBook> getPersonalBooks() {
         return new ArrayList<>(personalBooks);
+    }
+
+    public void setUser(String username) {
+        this.currentUser = username; // Set the current user name
     }
 
     public void addPersonalBook(PersonalBook book) {
@@ -31,10 +37,14 @@ public class PersonalDatabase {
         personalBooks.clear();
     }
 
-    public void saveToFile(String filePath) {
+    public void saveToFile() {
+        if (currentUser.isEmpty()) {
+            return; // No user, no saving
+        }
+
+        String filePath = currentUser + ".csv"; // File name based on user
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
             for (PersonalBook book : personalBooks) {
-                // Save key data for each personal book
                 writer.write(book.getTitle() + "," + book.getAuthor() + "," + book.getStatus() + "," + book.getTimeSpent() + "\n");
             }
         } catch (IOException e) {
@@ -42,8 +52,14 @@ public class PersonalDatabase {
         }
     }
 
-    public void loadFromFile(String filePath) {
+    public void loadFromFile() {
+        if (currentUser.isEmpty()) {
+            return; // No user, no loading
+        }
+
+        String filePath = currentUser + ".csv"; // File name based on user
         personalBooks.clear(); // Clear existing books before loading
+
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -58,7 +74,7 @@ public class PersonalDatabase {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            // If the file doesn't exist, it's okay, we start with an empty personal database
         }
     }
 }

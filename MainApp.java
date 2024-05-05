@@ -1,30 +1,27 @@
 import javax.swing.*;
 import java.awt.*;
-import java.util.HashMap;
-import java.util.Map;
 
 public class MainApp {
     private GeneralDatabase generalDatabase;
     private PersonalDatabase personalDatabase;
-    private static final String PERSONAL_BOOKS_FILE = "personal_books.txt";
 
     public MainApp() {
         generalDatabase = new GeneralDatabase();
-        generalDatabase.loadFromCSV("brodsky.csv"); // Load general database from CSV
+        generalDatabase.loadFromCSV("brodsky.csv");
 
-        personalDatabase = new PersonalDatabase(); // User's personal library
-        personalDatabase.loadFromFile(PERSONAL_BOOKS_FILE); // Load personal database from file
+        personalDatabase = new PersonalDatabase();
 
         initializeLoginPage(); // Start with login/registration
-
-        // Save personal database on exit
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> personalDatabase.saveToFile(PERSONAL_BOOKS_FILE)));
     }
 
     private void initializeLoginPage() {
         LoginAndRegistrationPage loginPage = new LoginAndRegistrationPage();
 
         loginPage.setLoginListener(isAdmin -> {
+            String username = loginPage.getUsername(); // Get the logged-in username
+            personalDatabase.setUser(username); // Set the user in PersonalDatabase
+            personalDatabase.loadFromFile(); // Load personal data
+
             if (isAdmin) {
                 openAdminPage(); // Admin functionality
             } else {
@@ -41,6 +38,7 @@ public class MainApp {
         mainInterface.setGeneralDatabaseListener(() -> new GeneralDatabaseGUI(generalDatabase, personalDatabase));
         mainInterface.setPersonalDatabaseListener(() -> new PersonalDatabaseGUI(personalDatabase));
         mainInterface.setLogoutListener(() -> {
+            personalDatabase.saveToFile(); // Save personal books on logout
             mainInterface.dispose(); // Close the main interface
             initializeLoginPage(); // Return to login/registration
         });
@@ -58,16 +56,7 @@ public class MainApp {
         userTextArea.setEditable(false);
         userTextArea.setFont(new Font("Verdana", Font.PLAIN, 14));
 
-        StringBuilder userList = new StringBuilder("Registered Users:\n");
-        for (Map.Entry<String, String> entry : new HashMap<String, String>().entrySet()) {
-            userList.append("Username: ").append(entry.getKey())
-                    .append(", Password: ").append(entry.getValue())
-                    .append("\n");
-        }
-
-        JScrollPane scrollPane = new JScrollPane(userTextArea); 
-        adminFrame.add(scrollPane);
-
+        adminFrame.add(new JScrollPane(userTextArea));
         adminFrame.setVisible(true);
     }
 

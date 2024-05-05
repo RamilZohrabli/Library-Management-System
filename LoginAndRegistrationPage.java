@@ -59,6 +59,9 @@ public class LoginAndRegistrationPage extends JFrame {
         setLocationRelativeTo(null);
         setVisible(true); // Show the frame
     }
+    public String getUsername() {
+        return usernameField.getText(); 
+    }
     public void openAdminPage() {
         JFrame adminFrame = new JFrame("Admin Panel");
         adminFrame.setSize(400, 300);
@@ -242,3 +245,4 @@ public class LoginAndRegistrationPage extends JFrame {
         SwingUtilities.invokeLater(() -> new LoginAndRegistrationPage());
     }
 }
+
