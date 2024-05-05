@@ -1,35 +1,33 @@
 import javax.swing.*;
-import java.awt.*;
 
 public class MainApp {
     private GeneralDatabase generalDatabase;
     private PersonalDatabase personalDatabase;
 
     public MainApp() {
-        generalDatabase = new GeneralDatabase();
-        generalDatabase.loadFromCSV("brodsky.csv");
+        generalDatabase = new GeneralDatabase(); // No argument required
+        generalDatabase.loadFromCSV(); // Load from "general.csv"
 
         personalDatabase = new PersonalDatabase();
 
-        initializeLoginPage(); // Start with login/registration
+        initializeLoginPage(); // Start with the login/registration
     }
 
     private void initializeLoginPage() {
         LoginAndRegistrationPage loginPage = new LoginAndRegistrationPage();
 
         loginPage.setLoginListener(isAdmin -> {
-            String username = loginPage.getUsername(); // Get the logged-in username
-            personalDatabase.setUser(username); // Set the user in PersonalDatabase
-            personalDatabase.loadFromFile(); // Load personal data
-
             if (isAdmin) {
                 openAdminPage(); // Admin functionality
             } else {
+                String username = loginPage.getUsername(); // Get the logged-in username
+                personalDatabase.setUser(username); // Set the user in PersonalDatabase
+                personalDatabase.loadFromFile(); // Load personal data
                 openMainInterface(); // Open the main interface for regular users
             }
         });
 
-        loginPage.setVisible(true);
+        loginPage.setVisible(true); // Show the login page
     }
 
     private void openMainInterface() {
@@ -47,20 +45,13 @@ public class MainApp {
     }
 
     private void openAdminPage() {
-        JFrame adminFrame = new JFrame("Admin Panel");
-        adminFrame.setSize(400, 300);
-        adminFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        adminFrame.setLocationRelativeTo(null);
-
-        JTextArea userTextArea = new JTextArea();
-        userTextArea.setEditable(false);
-        userTextArea.setFont(new Font("Verdana", Font.PLAIN, 14));
-
-        adminFrame.add(new JScrollPane(userTextArea));
-        adminFrame.setVisible(true);
+        // When admin logs in, open the admin interface
+        GeneralDatabase generalDatabase = new GeneralDatabase(); // Use general.csv
+        generalDatabase.loadFromCSV(); // Load from the default CSV
+        new AdminInterface(generalDatabase); // Open the admin interface
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(MainApp::new);
+        SwingUtilities.invokeLater(MainApp::new); // Start the application
     }
 }

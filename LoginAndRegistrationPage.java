@@ -162,13 +162,12 @@ public class LoginAndRegistrationPage extends JFrame {
 
         add(panel); // Add the panel to the frame
     }
-
     private void login() {
         String username = usernameField.getText();
         String password = String.valueOf(passwordField.getPassword());
-
+    
         boolean isAdmin = false;
-
+    
         if (adminCredentials.containsKey(username) && adminCredentials.get(username).equals(password)) {
             isAdmin = true; // Admin login
         } else if (userDatabase.containsKey(username) && userDatabase.get(username).equals(password)) {
@@ -177,12 +176,20 @@ public class LoginAndRegistrationPage extends JFrame {
             JOptionPane.showMessageDialog(this, "Invalid username or password.");
             return; // Exit if login fails
         }
-
+    
         // Notify the listener upon successful login
         if (loginListener != null) {
-            loginListener.onLoginSuccess(isAdmin); // Trigger the listener
+            if (isAdmin) {
+                // Open the admin interface for admin login
+                GeneralDatabase generalDatabase = new GeneralDatabase();
+                generalDatabase.loadFromCSV(); // Load from "general.csv"
+                new AdminInterface(generalDatabase); // Open Admin Interface
+            } else {
+                loginListener.onLoginSuccess(false); // Trigger for regular user
+            }
         }
     }
+
 
     private void register() {
         String username = usernameField.getText();
