@@ -25,9 +25,11 @@ class GeneralDatabase {
 
 class GeneralDatabaseGUI {
   - table: JTable
-  - tableModel: DefaultTableModel
-  + GeneralDatabaseGUI(database: GeneralDatabase)
+  - personalDatabase: PersonalDatabase
+  - addToPersonalLibraryButton: JButton
+  + GeneralDatabaseGUI(database: GeneralDatabase, personalDatabase: PersonalDatabase)
   + populateTable(books: List<GeneralBook>): void
+  + addBookToPersonalLibrary(): void
 }
 
 class PersonalBook {
@@ -59,6 +61,8 @@ class PersonalDatabase {
   + addPersonalBook(book: PersonalBook): void
   + removePersonalBook(title: String): void
   + getPersonalBook(title: String): PersonalBook
+  + saveToFile(filePath: String): void
+  + loadFromFile(filePath: String): void
 }
 
 class PersonalDatabaseGUI {
@@ -68,40 +72,51 @@ class PersonalDatabaseGUI {
   + populatePersonalTable(books: List<PersonalBook>): void
 }
 
-class User {
-  - username: String
-  - password: String
-  - personalDatabase: PersonalDatabase
-  + register(username: String, password: String): void
-  + login(username: String, password: String): boolean
-  + addBookToPersonalDatabase(book: PersonalBook): void
-  + removeBookFromPersonalDatabase(title: String): void
-}
-
-class Admin {
-  - username: String
-  - password: String
-  + login(username: String, password: String): boolean
-  + addBookToGeneralDatabase(generalDatabase: GeneralDatabase, book: GeneralBook): void
-  + removeBookFromGeneralDatabase(generalDatabase: GeneralDatabase, title: String): void
-}
-
 class LoginAndRegistrationPage {
   - userDatabase: Map<String, String>
   - adminCredentials: Map<String, String>
-  + login(username: String, password: String): boolean
-  + register(username: String, password: String): void
+  - loginListener: LoginListener
+  + setLoginListener(listener: LoginListener): void
+  + login(): void
+  + register(): void
   + loadUsersFromFile(): void
   + saveUsersToFile(): void
 }
 
+interface LoginListener {
+  + onLoginSuccess(isAdmin: Boolean): void
+}
+
+class MainInterface {
+  - generalDatabaseButton: JButton
+  - personalDatabaseButton: JButton
+  - logoutButton: JButton
+  + MainInterface()
+  + setGeneralDatabaseListener(listener: Runnable): void
+  + setPersonalDatabaseListener(listener: Runnable): void
+  + setLogoutListener(listener: Runnable): void
+}
+
+class MainApp {
+  - generalDatabase: GeneralDatabase
+  - personalDatabase: PersonalDatabase
+  + MainApp()
+  + initializeLoginPage(): void
+  + openMainInterface(): void
+  + openAdminPage(): void
+}
+
 GeneralDatabase "1" *-- "many" GeneralBook
 PersonalDatabase "1" *-- "many" PersonalBook
-PersonalBook "1" -- "1" GeneralBook
-User "1" -- "1" PersonalDatabase
 GeneralDatabaseGUI "1" -- "1" GeneralDatabase
+GeneralDatabaseGUI "1" -- "1" PersonalDatabase
 PersonalDatabaseGUI "1" -- "1" PersonalDatabase
-Admin "1" -- "1" GeneralDatabase
-LoginAndRegistrationPage -- "1" Admin
-LoginAndRegistrationPage -- "1..*" User
+LoginAndRegistrationPage "1" -- "1" LoginListener
+MainApp "1" -- "1" GeneralDatabase
+MainApp "1" -- "1" PersonalDatabase
+MainApp "1" -- "1" LoginAndRegistrationPage
+MainInterface "1" -- "1" MainApp
+MainInterface "1" -- "1" GeneralDatabaseGUI
+MainInterface "1" -- "1" PersonalDatabaseGUI
+
 @enduml
