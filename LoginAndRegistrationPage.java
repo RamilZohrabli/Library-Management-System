@@ -11,17 +11,17 @@ import java.util.TimerTask;
 
 public class LoginAndRegistrationPage extends JFrame {
 
-    // Listener interface for login success
     public interface LoginListener {
-        void onLoginSuccess(boolean isAdmin);
+        // Should accept two parameters: isAdmin and username
+        void onLoginSuccess(boolean isAdmin, String username);
     }
 
-    private LoginListener loginListener; // Field to hold the listener instance
+    private LoginListener loginListener;
 
-    // Method to set the login listener
     public void setLoginListener(LoginListener listener) {
         this.loginListener = listener;
     }
+
 
     private Map<String, String> userDatabase; // Simulated user database
     private Map<String, String> adminCredentials; // Admin credentials
@@ -162,8 +162,9 @@ public class LoginAndRegistrationPage extends JFrame {
 
         add(panel); // Add the panel to the frame
     }
+    
     private void login() {
-        String username = usernameField.getText();
+        String username = usernameField.getText(); // Capture the username
         String password = String.valueOf(passwordField.getPassword());
     
         boolean isAdmin = false;
@@ -180,15 +181,13 @@ public class LoginAndRegistrationPage extends JFrame {
         // Notify the listener upon successful login
         if (loginListener != null) {
             if (isAdmin) {
-                // Open the admin interface for admin login
-                GeneralDatabase generalDatabase = new GeneralDatabase();
-                generalDatabase.loadFromCSV(); // Load from "general.csv"
-                new AdminInterface(generalDatabase); // Open Admin Interface
+                loginListener.onLoginSuccess(true, "admin"); // Admin login, pass "admin"
             } else {
-                loginListener.onLoginSuccess(false); // Trigger for regular user
+                loginListener.onLoginSuccess(false, username); // Corrected: Pass username
             }
         }
     }
+    
 
 
     private void register() {
