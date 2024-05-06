@@ -1,25 +1,45 @@
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.*;
 import java.util.List;
 
 public class GeneralDatabaseGUI extends JFrame {
     private JTable table;
-    private JButton addToPersonalLibraryButton; // Button to add a book to the personal library
+    private DefaultTableModel tableModel;
+
     public GeneralDatabaseGUI(GeneralDatabase generalDatabase, PersonalDatabase personalDatabase, boolean isRegularUser) {
         setTitle("General Database");
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        table = new JTable(new DefaultTableModel(new Object[]{"Title", "Author", "Rating", "Reviews"}, 0));
+        // Create the table model with non-editable cells
+        tableModel = new DefaultTableModel(new Object[]{"Title", "Author", "Rating", "Reviews"}, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // Disable cell editing entirely
+            }
+        };
+
+        // Create the table and add key listener to prevent deletion by keypress
+        table = new JTable(tableModel);
+        table.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE || e.getKeyCode() == KeyEvent.VK_DELETE) {
+                    e.consume(); // Prevent backspace and delete
+                }
+            }
+        });
+
         populateTable(generalDatabase.getBooks());
 
         JPanel bottomPanel = new JPanel();
 
-        // Only show the "Add to Personal Library" button if the user is not an admin
+        // Add a button for regular users to add to personal library
         if (isRegularUser) {
-            addToPersonalLibraryButton = new JButton("Add to Personal Library");
+            JButton addToPersonalLibraryButton = new JButton("Add to Personal Library");
             addToPersonalLibraryButton.addActionListener(e -> addBookToPersonalLibrary(personalDatabase));
             bottomPanel.add(addToPersonalLibraryButton);
         }
@@ -31,8 +51,7 @@ public class GeneralDatabaseGUI extends JFrame {
     }
 
     private void populateTable(List<GeneralBook> books) {
-        DefaultTableModel model = (DefaultTableModel) table.getModel();
-        model.setRowCount(0); // Clear existing rows
+        tableModel.setRowCount(0); // Clear existing rows
 
         for (GeneralBook book : books) {
             double rating = book.getAverageRating();
@@ -40,7 +59,7 @@ public class GeneralDatabaseGUI extends JFrame {
 
             String reviews = book.getReviews().isEmpty() ? "No reviews" : String.join(", ", book.getReviews());
 
-            model.addRow(new Object[]{
+            tableModel.addRow(new Object[]{
                 book.getTitle(),
                 book.getAuthor(),
                 ratingStr,
@@ -56,8 +75,8 @@ public class GeneralDatabaseGUI extends JFrame {
             return;
         }
 
-        String title = (String) table.getValueAt(selectedRow, 0);
-        String author = (String) table.getValueAt(selectedRow, 1);
+        String title = (String) tableModel.getValueAt(selectedRow, 0);
+        String author = (String) tableModel.getValueAt(selectedRow, 1);
 
         PersonalBook personalBook = new PersonalBook(title, author);
         personalDatabase.addPersonalBook(personalBook);
