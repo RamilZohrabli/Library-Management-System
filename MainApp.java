@@ -16,29 +16,24 @@ public class MainApp {
     private void initializeLoginPage() {
         LoginAndRegistrationPage loginPage = new LoginAndRegistrationPage();
     
-        loginPage.setLoginListener(new LoginAndRegistrationPage.LoginListener() {
-            @Override
-            public void onLoginSuccess(boolean isAdmin, String username) {
-                if (isAdmin) {
-                    openMainInterface(true); // Admin functionality
-                } else {
-                    personalDatabase.setUser(username);
-                    personalDatabase.loadFromFile(); // Load personal data
-                    openMainInterface(false); // Open the main interface for regular users
-                }
+        loginPage.setLoginListener((isAdmin, username) -> {
+            if (isAdmin) {
+                openMainInterface(true); // Admin functionality
+            } else {
+                personalDatabase.setUser(username);
+                personalDatabase.loadFromFile(); // Load personal data
+                openMainInterface(false); // Open the main interface for regular users
             }
         });
         loginPage.setVisible(true);
     }
     
-    
-    
-    
-
     private void openMainInterface(boolean isAdmin) {
         MainInterface mainInterface = new MainInterface(isAdmin);
 
-        mainInterface.setGeneralDatabaseListener(() -> new GeneralDatabaseGUI(generalDatabase, personalDatabase));
+        // Update to pass the isAdmin flag to GeneralDatabaseGUI
+        mainInterface.setGeneralDatabaseListener(() -> new GeneralDatabaseGUI(generalDatabase, personalDatabase, !isAdmin));
+        
         if (isAdmin) {
             mainInterface.setAdminInterfaceListener(() -> new AdminInterface(generalDatabase));
         } else {

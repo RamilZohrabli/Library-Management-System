@@ -5,12 +5,8 @@ import java.util.List;
 
 public class GeneralDatabaseGUI extends JFrame {
     private JTable table;
-    private PersonalDatabase personalDatabase; // Reference to the personal database
     private JButton addToPersonalLibraryButton; // Button to add a book to the personal library
-
-    public GeneralDatabaseGUI(GeneralDatabase generalDatabase, PersonalDatabase personalDatabase) {
-        this.personalDatabase = personalDatabase;
-
+    public GeneralDatabaseGUI(GeneralDatabase generalDatabase, PersonalDatabase personalDatabase, boolean isRegularUser) {
         setTitle("General Database");
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -19,13 +15,16 @@ public class GeneralDatabaseGUI extends JFrame {
         table = new JTable(new DefaultTableModel(new Object[]{"Title", "Author", "Rating", "Reviews"}, 0));
         populateTable(generalDatabase.getBooks());
 
-        addToPersonalLibraryButton = new JButton("Add to Personal Library");
-        addToPersonalLibraryButton.addActionListener(e -> addBookToPersonalLibrary());
-
         JPanel bottomPanel = new JPanel();
-        bottomPanel.add(addToPersonalLibraryButton);
 
-        add(new JScrollPane(table), BorderLayout.CENTER); // Corrected
+        // Only show the "Add to Personal Library" button if the user is not an admin
+        if (isRegularUser) {
+            addToPersonalLibraryButton = new JButton("Add to Personal Library");
+            addToPersonalLibraryButton.addActionListener(e -> addBookToPersonalLibrary(personalDatabase));
+            bottomPanel.add(addToPersonalLibraryButton);
+        }
+
+        add(new JScrollPane(table), BorderLayout.CENTER);
         add(bottomPanel, BorderLayout.SOUTH);
 
         setVisible(true);
@@ -50,7 +49,7 @@ public class GeneralDatabaseGUI extends JFrame {
         }
     }
 
-    private void addBookToPersonalLibrary() {
+    private void addBookToPersonalLibrary(PersonalDatabase personalDatabase) {
         int selectedRow = table.getSelectedRow();
         if (selectedRow == -1) {
             JOptionPane.showMessageDialog(this, "Please select a book to add to your personal library.");
