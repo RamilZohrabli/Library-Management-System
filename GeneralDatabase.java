@@ -1,61 +1,48 @@
 import java.io.*;
-import java.nio.file.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+
 public class GeneralDatabase {
     private List<GeneralBook> books;
     private static final String GENERAL_CSV = "general.csv";
 
     public GeneralDatabase() {
         books = new ArrayList<>();
-        ensureGeneralCSVExists();
-    }
-
-    private void ensureGeneralCSVExists() {
-        File generalFile = new File(GENERAL_CSV);
-        if (!generalFile.exists()) {
-            try {
-                Files.copy(Paths.get("brodsky.csv"), Paths.get(GENERAL_CSV));
-            } catch (IOException e) {
-                e.printStackTrace(); // Handle file copy error
-            }
-        }
+        loadFromCSV(); // Load books from the provided general.csv file
     }
 
     public void loadFromCSV() {
         books.clear(); // Clear any existing data
         try (BufferedReader br = new BufferedReader(new FileReader(GENERAL_CSV))) {
             String line;
-            boolean isHeader = true;
+            boolean isHeader = true; // Assuming the first line is a header
             while ((line = br.readLine()) != null) {
                 if (isHeader) {
-                    isHeader = false;
+                    isHeader = false; // Skip the header
                     continue;
                 }
-                String[] values = line.split(",");
-                String title = values[0];
-                String author = values.length > 1 ? values[1] : "Unknown";
+                String[] values = line.split(","); // CSV delimited by commas
+                String title = values[0]; // Assume the title is the first value
+                String author = values.length > 1 ? values[1] : "Unknown"; // Default to "Unknown" if there's no author
                 GeneralBook book = new GeneralBook(title, author);
-                books.add(book);
+                books.add(book); // Add the book to the list
             }
         } catch (IOException e) {
-            e.printStackTrace(); // Handle file read error
+            e.printStackTrace(); // Handle file reading errors
         }
     }
 
     public List<GeneralBook> getBooks() {
-        return new ArrayList<>(books); // Return a new list to ensure encapsulation
+        return new ArrayList<>(books); // Return a copy of the list for encapsulation
     }
 
     public void saveToCSV() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(GENERAL_CSV))) {
             for (GeneralBook book : books) {
-                writer.write(book.getTitle() + "," + book.getAuthor());
+                writer.write(book.getTitle() + "," + book.getAuthor()); // Write the book's title and author
                 writer.newLine(); // Move to the next line
             }
         } catch (IOException e) {
-            e.printStackTrace(); // Handle file write error
+            e.printStackTrace(); // Handle file writing errors
         }
     }
 }
-
