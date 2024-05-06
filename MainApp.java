@@ -1,66 +1,101 @@
 import javax.swing.*;
-import java.awt.*;
+import java.io.*;
 
 public class MainApp {
     private GeneralDatabase generalDatabase;
     private PersonalDatabase personalDatabase;
+    private static final String CURRENT_USER_FILE = "current_user.txt";
 
     public MainApp() {
         generalDatabase = new GeneralDatabase();
-        generalDatabase.loadFromCSV("brodsky.csv");
+        generalDatabase.loadFromCSV();
 
         personalDatabase = new PersonalDatabase();
 
-        initializeLoginPage(); // Start with login/registration
+        initializeLoginPage(); // Start with the login/registration
     }
 
     private void initializeLoginPage() {
-        LoginAndRegistrationPage loginPage = new LoginAndRegistrationPage();
-
-        loginPage.setLoginListener(isAdmin -> {
-            String username = loginPage.getUsername(); // Get the logged-in username
-            personalDatabase.setUser(username); // Set the user in PersonalDatabase
-            personalDatabase.loadFromFile(); // Load personal data
-
-            if (isAdmin) {
-                openAdminPage(); // Admin functionality
+        // Check if there's a currently logged-in user
+        String loggedInUser = getCurrentLoggedInUser();
+        if (loggedInUser != null) {
+            // Auto-login based on the stored username
+            if (loggedInUser.equals("admin")) {
+                openMainInterface(true); // Admin functionality
             } else {
-                openMainInterface(); // Open the main interface for regular users
+                personalDatabase.setUser(loggedInUser);
+                personalDatabase.loadFromFile(); // Load personal data
+                openMainInterface(false); // Open the main interface for regular users
             }
-        });
+        } else {
+            // Show login/registration page
+            LoginAndRegistrationPage loginPage = new LoginAndRegistrationPage();
 
-        loginPage.setVisible(true);
+            loginPage.setLoginListener((isAdmin, username) -> {
+                saveCurrentUser(username); // Save the current logged-in user
+
+                if (isAdmin) {
+                    openMainInterface(true); // Admin functionality
+                } else {
+                    personalDatabase.setUser(username);
+                    personalDatabase.loadFromFile(); // Load personal data
+                    openMainInterface(false); // Open the main interface for regular users
+                }
+            });
+
+            loginPage.setVisible(true);
+        }
     }
 
-    private void openMainInterface() {
-        MainInterface mainInterface = new MainInterface();
+    private void openMainInterface(boolean isAdmin) {
+        MainInterface mainInterface = new MainInterface(isAdmin);
 
-        mainInterface.setGeneralDatabaseListener(() -> new GeneralDatabaseGUI(generalDatabase, personalDatabase));
-        mainInterface.setPersonalDatabaseListener(() -> new PersonalDatabaseGUI(personalDatabase));
+        mainInterface.setGeneralDatabaseListener(() -> new GeneralDatabaseGUI(generalDatabase, personalDatabase, !isAdmin));
+        
+        if (isAdmin) {
+            mainInterface.setAdminInterfaceListener(() -> new AdminInterface(generalDatabase));
+        } else {
+            mainInterface.setPersonalDatabaseListener(() -> new PersonalDatabaseGUI(personalDatabase));
+        }
+        
         mainInterface.setLogoutListener(() -> {
-            personalDatabase.saveToFile(); // Save personal books on logout
-            mainInterface.dispose(); // Close the main interface
+            logout(); // Handle logout
             initializeLoginPage(); // Return to login/registration
         });
 
         mainInterface.setVisible(true);
     }
 
-    private void openAdminPage() {
-        JFrame adminFrame = new JFrame("Admin Panel");
-        adminFrame.setSize(400, 300);
-        adminFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        adminFrame.setLocationRelativeTo(null);
+    private void saveCurrentUser(String username) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(CURRENT_USER_FILE))) {
+            writer.write(username);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
-        JTextArea userTextArea = new JTextArea();
-        userTextArea.setEditable(false);
-        userTextArea.setFont(new Font("Verdana", Font.PLAIN, 14));
+    private String getCurrentLoggedInUser() {
+        File file = new File(CURRENT_USER_FILE);
+        if (file.exists()) {
+            try (BufferedReader reader = new BufferedReader(new FileReader(CURRENT_USER_FILE))) {
+                return reader.readLine().trim();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
 
-        adminFrame.add(new JScrollPane(userTextArea));
-        adminFrame.setVisible(true);
+    private void logout() {
+        File file = new File(CURRENT_USER_FILE);
+        if (file.exists()) {
+            file.delete(); // Delete the file to log out
+        }
+
+        personalDatabase.saveToFile(); // Save personal books on logout
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(MainApp::new);
+        SwingUtilities.invokeLater(MainApp::new); // Start the application
     }
 }
