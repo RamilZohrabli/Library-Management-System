@@ -3,11 +3,11 @@ import java.util.*;
 
 public class PersonalDatabase {
     private List<PersonalBook> personalBooks;
-    private String currentUser; // The current user name
+    private String currentUser;
 
     public PersonalDatabase() {
         personalBooks = new ArrayList<>();
-        currentUser = ""; // Default user name
+        currentUser = "";
     }
 
     public List<PersonalBook> getPersonalBooks() {
@@ -15,37 +15,36 @@ public class PersonalDatabase {
     }
 
     public void setUser(String username) {
-        this.currentUser = username; // Set the current user name
+        this.currentUser = username;
     }
 
     public void addPersonalBook(PersonalBook book) {
         personalBooks.add(book);
     }
 
-    public void removePersonalBook(String title) {
-        personalBooks.removeIf(book -> book.getTitle().equals(title));
-    }
-
     public PersonalBook getPersonalBook(String title) {
         return personalBooks.stream()
-            .filter(book -> book.getTitle().equals(title))
+            .filter(book -> book.getTitle().equalsIgnoreCase(title)) // Case-insensitive title matching
             .findFirst()
             .orElse(null);
     }
 
-    public void clear() {
-        personalBooks.clear();
-    }
-
     public void saveToFile() {
         if (currentUser.isEmpty()) {
-            return; // No user, no saving
+            return;
         }
 
-        String filePath = currentUser + ".csv"; // File name based on user
+        String filePath = currentUser + ".csv";
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
             for (PersonalBook book : personalBooks) {
-                writer.write(book.getTitle() + "," + book.getAuthor() + "," + book.getStatus() + "," + book.getTimeSpent() + "\n");
+                writer.write(book.getTitle() + "," + book.getAuthor() + "," + book.getStatus() + "," + book.getTimeSpent());
+                for (double rating : book.getUserRatings()) {
+                    writer.write("," + rating);
+                }
+                for (String review : book.getUserReviews()) {
+                    writer.write("," + review);
+                }
+                writer.newLine();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -54,11 +53,11 @@ public class PersonalDatabase {
 
     public void loadFromFile() {
         if (currentUser.isEmpty()) {
-            return; // No user, no loading
+            return;
         }
 
-        String filePath = currentUser + ".csv"; // File name based on user
-        personalBooks.clear(); // Clear existing books before loading
+        String filePath = currentUser + ".csv";
+        personalBooks.clear();
 
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String line;
@@ -70,11 +69,19 @@ public class PersonalDatabase {
                     if (parts.length > 3) {
                         book.addTimeSpent(Integer.parseInt(parts[3]));
                     }
+                    for (int i = 4; i < parts.length; i++) {
+                        try {
+                            double rating = Double.parseDouble(parts[i]);
+                            book.addUserRating(rating);
+                        } catch (NumberFormatException ex) {
+                            book.addUserReview(parts[i]);
+                        }
+                    }
                     personalBooks.add(book);
                 }
             }
         } catch (IOException e) {
-            // If the file doesn't exist, it's okay, we start with an empty personal database
+            e.printStackTrace();
         }
     }
 }

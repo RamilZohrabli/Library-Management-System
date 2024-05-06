@@ -1,9 +1,8 @@
 import java.util.*;
+
 public class PersonalBook extends GeneralBook {
     private String status;
-    private int timeSpent; 
-    private String startDate;
-    private String endDate;
+    private int timeSpent;
     private List<Double> userRatings;
     private List<String> userReviews;
 
@@ -33,22 +32,6 @@ public class PersonalBook extends GeneralBook {
         }
     }
 
-    public String getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(String startDate) {
-        this.startDate = startDate;
-    }
-
-    public String getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(String endDate) {
-        this.endDate = endDate;
-    }
-
     public List<Double> getUserRatings() {
         return userRatings;
     }
@@ -60,7 +43,7 @@ public class PersonalBook extends GeneralBook {
     public void addUserRating(double rating) {
         if (rating >= 1 && rating <= 5) {
             userRatings.add(rating);
-            addRating(rating); // Update the general database
+            addRating(rating); // Update the overall rating in the general database
         }
     }
 
