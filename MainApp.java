@@ -50,14 +50,16 @@ public class MainApp {
     private void openMainInterface(boolean isAdmin) {
         MainInterface mainInterface = new MainInterface(isAdmin);
 
-        mainInterface.setGeneralDatabaseListener(() -> new GeneralDatabaseGUI(generalDatabase, personalDatabase, !isAdmin));
+        mainInterface.setGeneralDatabaseListener(() -> {
+            new GeneralDatabaseGUI(generalDatabase, personalDatabase, !isAdmin);
+        });
         
         if (isAdmin) {
             mainInterface.setAdminInterfaceListener(() -> new AdminInterface(generalDatabase));
         } else {
-            mainInterface.setPersonalDatabaseListener(() -> new PersonalDatabaseGUI(personalDatabase));
+            mainInterface.setPersonalDatabaseListener(() -> new PersonalDatabaseGUI(personalDatabase, generalDatabase)); // Pass the general database reference
         }
-        
+
         mainInterface.setLogoutListener(() -> {
             logout(); // Handle logout
             initializeLoginPage(); // Return to login/registration

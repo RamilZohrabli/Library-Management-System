@@ -15,30 +15,19 @@ public class GeneralDatabaseGUI extends JFrame {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        // Create the table model with non-editable cells
         tableModel = new DefaultTableModel(new Object[]{"Title", "Author", "Rating", "Reviews"}, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false; // Disable cell editing entirely
+                return false;
             }
         };
 
-        // Create the table and add key listener to prevent deletion by keypress
         table = new JTable(tableModel);
-        table.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE || e.getKeyCode() == KeyEvent.VK_DELETE) {
-                    e.consume(); // Prevent backspace and delete
-                }
-            }
-        });
 
         populateTable(generalDatabase.getBooks());
 
         JPanel bottomPanel = new JPanel();
 
-        // Add a button for regular users to add to personal library
         if (isRegularUser) {
             JButton addToPersonalLibraryButton = new JButton("Add to Personal Library");
             addToPersonalLibraryButton.addActionListener(e -> addBookToPersonalLibrary(personalDatabase));
@@ -52,18 +41,24 @@ public class GeneralDatabaseGUI extends JFrame {
     }
 
     private void populateTable(List<GeneralBook> books) {
-        tableModel.setRowCount(0); // Clear existing rows
+        tableModel.setRowCount(0);
 
         for (GeneralBook book : books) {
             double rating = book.getAverageRating();
-            String ratingStr = (rating == -1) ? "No rating" : String.format("%.2f ", rating, book.getRatingCount());
+            int ratingCount = book.getRatingCount();
 
-            String reviews = book.getReviews().isEmpty() ? "No reviews" : String.join(", ", book.getReviews());
+            String ratingDisplay = rating == -1
+                ? "No rating"
+                : String.format("%.2f (%d)", rating, ratingCount); // Format with rating count
+
+            String reviews = book.getReviews().isEmpty()
+                ? "No reviews"
+                : String.join(", ", book.getReviews());
 
             tableModel.addRow(new Object[]{
                 book.getTitle(),
                 book.getAuthor(),
-                ratingStr,
+                ratingDisplay,
                 reviews
             });
         }

@@ -63,4 +63,9 @@ public class GeneralBook{
     public void setAuthor(String author) {
         this.author = author;
     }
+    public void setRatingCount(int count) {
+        if (count >= 0) {
+            this.ratingCount = count;
+        }
+    }
 }

@@ -8,10 +8,10 @@ public class PersonalDatabaseGUI extends JFrame {
     private JTable personalTable;
     private DefaultTableModel personalTableModel;
     private PersonalDatabase personalDatabase;
-
-    public PersonalDatabaseGUI(PersonalDatabase database) {
+    private GeneralDatabase generalDatabase;
+    public PersonalDatabaseGUI(PersonalDatabase database, GeneralDatabase generalDatabase) {
         this.personalDatabase = database;
-
+        this.generalDatabase = generalDatabase;
         setTitle("Personal Database");
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -90,8 +90,12 @@ public class PersonalDatabaseGUI extends JFrame {
                 return;
             }
 
-            book.addUserRating(rating); // Update user rating
-            personalDatabase.saveToFile(); // Save the new rating
+            book.addUserRating(rating); // Add user rating to personal book
+
+            // Update the general database
+            generalDatabase.updateBookRating(book.getTitle(), rating);
+
+            personalDatabase.saveToFile(); // Save the personal database
             populatePersonalTable(personalDatabase.getPersonalBooks()); // Refresh the table
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "Invalid rating. Please enter a number between 1 and 5.");

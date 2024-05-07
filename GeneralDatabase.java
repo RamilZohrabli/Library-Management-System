@@ -11,43 +11,49 @@ public class GeneralDatabase {
     }
 
     public void loadFromCSV() {
-        books.clear(); // Clear any existing data
+        books.clear();
         try (BufferedReader br = new BufferedReader(new FileReader(GENERAL_CSV))) {
             String line;
-            boolean isHeader = true; // Assuming the first line is a header
+            boolean isHeader = true;
             while ((line = br.readLine()) != null) {
                 if (isHeader) {
-                    isHeader = false; // Skip the header
-                    continue;
+                    isHeader = false;
+                    continue; // Skip header
                 }
-
-                String[] values = line.split(","); // CSV delimited by commas
+                String[] values = line.split(",");
                 String title = values[0];
                 String author = values.length > 1 ? values[1] : "Unknown";
 
                 GeneralBook book = new GeneralBook(title, author);
 
+                // If there's a stored rating, add it to the book
                 if (values.length > 2) {
                     try {
                         double rating = Double.parseDouble(values[2]);
                         if (rating != -1) {
-                            book.addRating(rating); // Set the average rating
+                            book.addRating(rating);
                         }
                     } catch (NumberFormatException e) {
-                        // If the rating cannot be parsed, it's left as "No rating"
+                        // Handle invalid rating values
                     }
                 }
 
+                // If there's a stored rating count, update the book's rating count
                 if (values.length > 3) {
-                    for (int i = 3; i < values.length; i++) {
-                        book.addReview(values[i]); // Add reviews
+                    try {
+                        int ratingCount = Integer.parseInt(values[3]);
+                        if (ratingCount > 0) {
+                            book.setRatingCount(ratingCount);
+                        }
+                    } catch (NumberFormatException e) {
+                        // Handle invalid rating count
                     }
                 }
 
-                books.add(book); // Add the book to the list
+                books.add(book); // Add to the general list
             }
         } catch (IOException e) {
-            e.printStackTrace(); // Handle file reading errors
+            e.printStackTrace();
         }
     }
 
@@ -57,29 +63,31 @@ public class GeneralDatabase {
 
     public void saveToCSV() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(GENERAL_CSV))) {
+            writer.write("Title,Author,Rating,Rating Count"); // Header
+            writer.newLine();
+
             for (GeneralBook book : books) {
-                writer.write(book.getTitle() + "," + book.getAuthor());
-
                 double rating = book.getAverageRating();
-                if (rating != -1) {
-                    writer.write("," + String.format("%.2f", rating)); // Write the book's rating
-                } else {
-                    writer.write(",No rating");
-                }
+                int ratingCount = book.getRatingCount();
 
-                List<String> reviews = book.getReviews();
-                if (!reviews.isEmpty()) {
-                    for (String review : reviews) {
-                        writer.write("," + review); // Write the reviews
-                    }
-                } else {
-                    writer.write(",No reviews");
-                }
-
-                writer.newLine(); // Move to the next line
+                writer.write(book.getTitle() + "," + book.getAuthor() + "," + (rating == -1 ? "No rating" : String.format("%.2f", rating)) + "," + (ratingCount > 0 ? ratingCount : 0));
+                writer.newLine();
             }
         } catch (IOException e) {
-            e.printStackTrace(); // Handle file writing errors
+            e.printStackTrace();
         }
+    }
+    public void updateBookRating(String title, double newRating) {
+        GeneralBook book = books.stream()
+            .filter(b -> b.getTitle().equalsIgnoreCase(title))
+            .findFirst()
+            .orElseGet(() -> {
+                GeneralBook newBook = new GeneralBook(title, "Unknown");
+                books.add(newBook);
+                return newBook;
+            });
+
+        book.addRating(newRating);
+        saveToCSV();
     }
 }
