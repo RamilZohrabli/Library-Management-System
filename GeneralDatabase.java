@@ -21,13 +21,29 @@ public class GeneralDatabase {
                     continue;
                 }
                 String[] values = line.split(","); // CSV delimited by commas
-                String title = values[0]; // Assume the title is the first value
-                String author = values.length > 1 ? values[1] : "Unknown"; // Default to "Unknown" if there's no author
+                String title = values[0];
+                String author = values.length > 1 ? values[1] : "Unknown";
+                double averageRating = values.length > 2 ? parseDoubleOrDefault(values[2], -1) : -1;
+                String review = values.length > 3 ? values[3] : "No Review";
+
                 GeneralBook book = new GeneralBook(title, author);
+                book.addReview(review);
+                if (averageRating != -1) {
+                    book.addRating(averageRating);
+                }
+
                 books.add(book); // Add the book to the list
             }
         } catch (IOException e) {
             e.printStackTrace(); // Handle file reading errors
+        }
+    }
+
+    private double parseDoubleOrDefault(String value, double defaultValue) {
+        try {
+            return Double.parseDouble(value);
+        } catch (NumberFormatException e) {
+            return defaultValue;
         }
     }
 
@@ -38,7 +54,12 @@ public class GeneralDatabase {
     public void saveToCSV() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(GENERAL_CSV))) {
             for (GeneralBook book : books) {
-                writer.write(book.getTitle() + "," + book.getAuthor()); // Write the book's title and author
+                writer.write(
+                    book.getTitle() + "," +
+                    book.getAuthor() + "," +
+                    (book.getAverageRating() == -1 ? "No Rating" : String.format("%.2f", book.getAverageRating())) + "," +
+                    (book.getReviews().isEmpty() ? "No Review" : book.getReviews().get(0))
+                ); 
                 writer.newLine(); // Move to the next line
             }
         } catch (IOException e) {
