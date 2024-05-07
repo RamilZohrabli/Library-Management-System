@@ -1,8 +1,9 @@
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.*;
 import java.util.List;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class GeneralDatabaseGUI extends JFrame {
     private JTable table;
@@ -55,7 +56,7 @@ public class GeneralDatabaseGUI extends JFrame {
 
         for (GeneralBook book : books) {
             double rating = book.getAverageRating();
-            String ratingStr = (rating == -1) ? "No rating" : String.format("%.2f (%d)", rating, book.getRatingCount());
+            String ratingStr = (rating == -1) ? "No rating" : String.format("%.2f ", rating, book.getRatingCount());
 
             String reviews = book.getReviews().isEmpty() ? "No reviews" : String.join(", ", book.getReviews());
 

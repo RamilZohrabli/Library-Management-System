@@ -20,10 +20,30 @@ public class GeneralDatabase {
                     isHeader = false; // Skip the header
                     continue;
                 }
+
                 String[] values = line.split(","); // CSV delimited by commas
-                String title = values[0]; // Assume the title is the first value
-                String author = values.length > 1 ? values[1] : "Unknown"; // Default to "Unknown" if there's no author
+                String title = values[0];
+                String author = values.length > 1 ? values[1] : "Unknown";
+
                 GeneralBook book = new GeneralBook(title, author);
+
+                if (values.length > 2) {
+                    try {
+                        double rating = Double.parseDouble(values[2]);
+                        if (rating != -1) {
+                            book.addRating(rating); // Set the average rating
+                        }
+                    } catch (NumberFormatException e) {
+                        // If the rating cannot be parsed, it's left as "No rating"
+                    }
+                }
+
+                if (values.length > 3) {
+                    for (int i = 3; i < values.length; i++) {
+                        book.addReview(values[i]); // Add reviews
+                    }
+                }
+
                 books.add(book); // Add the book to the list
             }
         } catch (IOException e) {
@@ -38,7 +58,24 @@ public class GeneralDatabase {
     public void saveToCSV() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(GENERAL_CSV))) {
             for (GeneralBook book : books) {
-                writer.write(book.getTitle() + "," + book.getAuthor()); // Write the book's title and author
+                writer.write(book.getTitle() + "," + book.getAuthor());
+
+                double rating = book.getAverageRating();
+                if (rating != -1) {
+                    writer.write("," + String.format("%.2f", rating)); // Write the book's rating
+                } else {
+                    writer.write(",No rating");
+                }
+
+                List<String> reviews = book.getReviews();
+                if (!reviews.isEmpty()) {
+                    for (String review : reviews) {
+                        writer.write("," + review); // Write the reviews
+                    }
+                } else {
+                    writer.write(",No reviews");
+                }
+
                 writer.newLine(); // Move to the next line
             }
         } catch (IOException e) {
