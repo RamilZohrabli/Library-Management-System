@@ -2,9 +2,6 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.List;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-
 public class GeneralDatabaseGUI extends JFrame {
     private JTable table;
     private DefaultTableModel tableModel;
