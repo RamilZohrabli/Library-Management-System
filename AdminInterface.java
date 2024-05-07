@@ -64,20 +64,12 @@ public class AdminInterface extends JFrame {
     private void populateTable() {
         tableModel.setRowCount(0); // Clear existing rows
         for (GeneralBook book : generalDatabase.getBooks()) {
-            double rating = book.getAverageRating();
-            String ratingStr = (rating == -1) ? "No Rating" : String.format("%.2f", rating);
-    
-            String reviews = book.getReviews().isEmpty() ? "No Review" : book.getReviews().get(0);
-    
             tableModel.addRow(new Object[]{
                 book.getTitle(),
-                book.getAuthor(),
-                ratingStr,
-                reviews
+                book.getAuthor()
             });
         }
     }
-    
 
     private void addBook() {
         JTextField titleField = new JTextField(15);
@@ -153,6 +145,4 @@ public class AdminInterface extends JFrame {
             populateTable(); // Refresh the table
         }
     }
-   
-    
 }
