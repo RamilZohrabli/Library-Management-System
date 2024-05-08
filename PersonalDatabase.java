@@ -17,7 +17,9 @@ public class PersonalDatabase {
     public void setUser(String username) {
         this.currentUser = username;
     }
-
+    public String getCurrentUser() {
+        return currentUser; // Returns the stored username
+    }
     public void addPersonalBook(PersonalBook book) {
         personalBooks.add(book);
     }
