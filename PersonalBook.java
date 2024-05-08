@@ -3,6 +3,8 @@ import java.util.*;
 public class PersonalBook extends GeneralBook {
     private String status;
     private int timeSpent;
+    private String startDate;
+    private String endDate;
     private List<Double> userRatings;
     private List<String> userReviews;
 
@@ -10,8 +12,27 @@ public class PersonalBook extends GeneralBook {
         super(title, author);
         this.status = "Not Started";
         this.timeSpent = 0;
+        this.startDate = "N/A"; // Default value indicating no date specified
+        this.endDate = "N/A";   // Default value indicating no date specified
         this.userRatings = new ArrayList<>();
         this.userReviews = new ArrayList<>();
+    }
+
+    // Getters and Setters for the new fields
+    public String getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(String startDate) {
+        this.startDate = startDate;
+    }
+
+    public String getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(String endDate) {
+        this.endDate = endDate;
     }
 
     public String getStatus() {

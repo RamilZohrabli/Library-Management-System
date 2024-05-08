@@ -9,8 +9,9 @@ public class PersonalDatabaseGUI extends JFrame {
     private DefaultTableModel personalTableModel;
     private PersonalDatabase personalDatabase;
     private GeneralDatabase generalDatabase;
-    public PersonalDatabaseGUI(PersonalDatabase database, GeneralDatabase generalDatabase) {
-        this.personalDatabase = database;
+
+    public PersonalDatabaseGUI(PersonalDatabase personalDatabase, GeneralDatabase generalDatabase) {
+        this.personalDatabase = personalDatabase;
         this.generalDatabase = generalDatabase;
         setTitle("Personal Database");
         setSize(800, 600);
@@ -18,10 +19,10 @@ public class PersonalDatabaseGUI extends JFrame {
         setLayout(new BorderLayout());
 
         personalTableModel = new DefaultTableModel(new Object[]{
-            "Title", "Author", "Status", "Time Spent", "User Rating", "User Review"}, 0) {
+            "Title", "Author", "Status", "Time Spent", "Start Date", "End Date", "User Rating", "User Review"}, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false; 
+                return false;
             }
         };
 
@@ -35,7 +36,7 @@ public class PersonalDatabaseGUI extends JFrame {
             }
         });
 
-        populatePersonalTable(personalDatabase.getPersonalBooks());
+        populatePersonalTable(personalDatabase.getPersonalBooks()); // Refresh the table with existing data
 
         JButton rateBookButton = new JButton("Rate Book");
         rateBookButton.addActionListener(e -> rateBook());
@@ -60,6 +61,8 @@ public class PersonalDatabaseGUI extends JFrame {
                 book.getAuthor(),
                 book.getStatus(),
                 book.getTimeSpent(),
+                book.getStartDate(),
+                book.getEndDate(),
                 userRating == -1 ? "No rating" : String.format("%.2f", userRating),
                 userReview
             });
