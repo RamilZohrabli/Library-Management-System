@@ -3,8 +3,12 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class PersonalDatabaseGUI extends JFrame {
+    private Timer readingTimer;
+    private PersonalBook currentBook;
     private JTable personalTable;
     private DefaultTableModel personalTableModel;
     private PersonalDatabase personalDatabase;
@@ -53,6 +57,7 @@ public class PersonalDatabaseGUI extends JFrame {
         add(buttonPanel, BorderLayout.SOUTH); // Button panel at the bottom
 
         setVisible(true);
+        readingTimer = new Timer();
     }
 
     private void populatePersonalTable() {
@@ -157,9 +162,9 @@ public class PersonalDatabaseGUI extends JFrame {
         }
 
         String title = (String) personalTableModel.getValueAt(selectedRow, 0);
-        PersonalBook book = personalDatabase.getPersonalBook(title);
+        currentBook = personalDatabase.getPersonalBook(title);
 
-        if (book == null) {
+        if (currentBook == null) {
             JOptionPane.showMessageDialog(this, "Book not found.");
             return;
         }
@@ -172,23 +177,78 @@ public class PersonalDatabaseGUI extends JFrame {
             JOptionPane.QUESTION_MESSAGE,
             null,
             options,
-            book.getStatus() // Default to current status
+            currentBook.getStatus() // Default to current status
         );
 
         if (newStatus != null) {
-            book.setStatus(newStatus); // Update status
+            String previousStatus = currentBook.getStatus();
+            currentBook.setStatus(newStatus);
 
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy"); // Date format
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy");
             String currentDate = sdf.format(new Date());
 
-            if (newStatus.equals("Ongoing") && book.getStartDate().equals("N/A")) {
-                book.setStartDate(currentDate); // Set start date if it's ongoing
-            } else if (newStatus.equals("Completed") && book.getEndDate().equals("N/A")) {
-                book.setEndDate(currentDate); // Set end date if it's completed
+            if (newStatus.equals("Ongoing")) {
+                if (previousStatus.equals("Not Started")) {
+                    currentBook.setStartDate(currentDate);
+                }
+
+                // Start or restart the timer for reading time
+                startReadingTimer(currentBook);
+
+            } else if (newStatus.equals("Completed")) {
+                currentBook.setEndDate(currentDate);
+
+                // Stop the timer and update time spent
+                stopReadingTimer();
+                updateTimeSpent(currentBook);
             }
 
-            personalDatabase.saveToFile(); // Save the updated personal data
-            populatePersonalTable(); // Refresh the table with new data
+            personalDatabase.saveToFile();
+            populatePersonalTable();
+        }
+    }
+
+    private void startReadingTimer(PersonalBook book) {
+        if (readingTimer != null) {
+            readingTimer.cancel();
+        }
+
+        readingTimer = new Timer();
+        readingTimer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                book.addTimeSpent(1); // Increment time spent by one minute
+                personalDatabase.saveToFile();
+                populatePersonalTable();
+            }
+        }, 60000, 60000); // Every minute
+    }
+
+    private void stopReadingTimer() {
+        if (readingTimer != null) {
+            readingTimer.cancel();
+        }
+    }
+
+    private void updateTimeSpent(PersonalBook book) {
+        if (book.getStartDate().equals("N/A") || book.getEndDate().equals("N/A")) {
+            return; // No valid dates
+        }
+
+        // Calculate the total time spent between start and end dates
+        // This is a simplified approach; consider a more robust method for actual implementation
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy");
+        try {
+            Date start = sdf.parse(book.getStartDate());
+            Date end = sdf.parse(book.getEndDate());
+
+            long diffInMillies = Math.abs(end.getTime() - start.getTime());
+            long diffInMinutes = diffInMillies / (1000 * 60);
+
+            book.addTimeSpent((int) diffInMinutes); // Add total time spent
+            personalDatabase.saveToFile(); // Save changes
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 }
