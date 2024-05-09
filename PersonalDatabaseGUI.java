@@ -9,12 +9,10 @@ public class PersonalDatabaseGUI extends JFrame {
     private DefaultTableModel personalTableModel;
     private PersonalDatabase personalDatabase;
     private GeneralDatabase generalDatabase;
-    private String currentUser;
-
     public PersonalDatabaseGUI(PersonalDatabase personalDatabase, GeneralDatabase generalDatabase) {
         this.personalDatabase = personalDatabase;
         this.generalDatabase = generalDatabase;
-        this.currentUser = personalDatabase.getCurrentUser(); // Retrieve the current user's name
+        personalDatabase.getCurrentUser();
         setTitle("Personal Database");
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -29,6 +27,7 @@ public class PersonalDatabaseGUI extends JFrame {
         };
 
         personalTable = new JTable(personalTableModel);
+        
         personalTable.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
@@ -57,10 +56,10 @@ public class PersonalDatabaseGUI extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) { // Double-click to view full review
-                    int row = personalTable.getSelectedRow();
-                    String review = (String) personalTableModel.getValueAt(row, 7); // 7th column for review
-                    if (review.contains("click to read more")) {
-                        viewFullReview(review); // Open the full review
+                    int selectedRow = personalTable.getSelectedRow();
+                    if (selectedRow >= 0) {
+                        String fullReview = getFullReview(selectedRow, personalDatabase);
+                        JOptionPane.showMessageDialog(PersonalDatabaseGUI.this, fullReview, "Full Review", JOptionPane.INFORMATION_MESSAGE);
                     }
                 }
             }
@@ -73,9 +72,7 @@ public class PersonalDatabaseGUI extends JFrame {
         personalTableModel.setRowCount(0); // Clear existing rows
         for (PersonalBook book : personalBooks) {
             double userRating = book.getUserRatings().isEmpty() ? -1 : book.getUserRatings().get(0);
-            String userReview = book.getUserReviews().isEmpty() 
-                ? "No review" 
-                : shortenReview(book.getUserReviews().get(0)); // Display shortened review with "click to read more"
+            String userReview = book.getUserReviews().isEmpty() ? "No review"  : shortenReview(book.getUserReviews().get(0)); // Display shortened review with "click to read more"
 
             personalTableModel.addRow(new Object[]{
                 book.getTitle(),
@@ -91,13 +88,21 @@ public class PersonalDatabaseGUI extends JFrame {
     }
 
     private String shortenReview(String review) {
-        if (review.length() > 20) { // Example: If review is more than 20 characters
-            return review.substring(0, 20) + "... (click to read more)";
-        } else {
-            return review;
+        if (review.length() > 20) {
+            return review.substring(0, 20) + "... (click to read more)"; // Shorten and append a clue for more text
         }
+        return review; // Return the full review if it's short enough
     }
+    private String getFullReview(int row, PersonalDatabase personalDatabase) {
+        String bookTitle = (String) personalTableModel.getValueAt(row, 0); // Get the book's title
+        PersonalBook book = personalDatabase.getPersonalBook(bookTitle); // Find the corresponding book in the personal database
 
+        if (book != null && !book.getUserReviews().isEmpty()) {
+            return book.getUserReviews().get(0); // Return the first full review
+        }
+
+        return "No review available."; // Default message if no review exists
+    }
     private void rateBook() {
         int selectedRow = personalTable.getSelectedRow();
         if (selectedRow == -1) {
@@ -138,28 +143,24 @@ public class PersonalDatabaseGUI extends JFrame {
             JOptionPane.showMessageDialog(this, "Please select a book to write a review.");
             return;
         }
-
+    
         String title = (String) personalTableModel.getValueAt(selectedRow, 0);
         PersonalBook book = personalDatabase.getPersonalBook(title);
-
+    
         if (book == null) {
             JOptionPane.showMessageDialog(this, "Book not found.");
             return;
         }
-
+    
         String review = JOptionPane.showInputDialog(this, "Write your review:");
-
+    
         if (review != null && !review.trim().isEmpty()) {
-            book.addUserReview(review + " - " + currentUser); // Include the username with the review
-
+            // Corrected: Store the review without appending the username
+            book.addUserReview(review);
+    
             personalDatabase.saveToFile(); // Save the personal database
             populatePersonalTable(personalDatabase.getPersonalBooks()); // Refresh the table
         }
-    }
-
-    private void viewFullReview(String review) {
-        String fullReview = review.split("\\(click to read more\\)")[0]; // Extract the full review
-        JOptionPane.showMessageDialog(this, fullReview, "Full Review", JOptionPane.INFORMATION_MESSAGE);
     }
 }
 
