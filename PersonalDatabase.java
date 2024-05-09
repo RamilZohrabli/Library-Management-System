@@ -13,9 +13,7 @@ public class PersonalDatabase {
     public List<PersonalBook> getPersonalBooks() {
         return new ArrayList<>(personalBooks);
     }
-    public String getCurrentUser() {
-        return currentUser; // Return the current user
-    }
+
     public void setUser(String username) {
         this.currentUser = username;
     }
@@ -33,37 +31,40 @@ public class PersonalDatabase {
 
     public void saveToFile() {
         if (currentUser.isEmpty()) {
-            return; // No user specified, exit
+            return;
         }
 
-        String filePath = currentUser + ".csv"; // File named after current user
+        String filePath = currentUser + ".csv";
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
             for (PersonalBook book : personalBooks) {
                 StringBuilder sb = new StringBuilder();
-                // Build the CSV line correctly
+
                 sb.append(book.getTitle()).append(",")
                   .append(book.getAuthor()).append(",")
                   .append(book.getStatus()).append(",")
-                  .append(book.getTimeSpent());
-                
+                  .append(book.getTimeSpent()).append(",")
+                  .append(book.getStartDate()).append(",") // Include start date
+                  .append(book.getEndDate()); // Include end date
+
                 // Append user ratings
                 for (double rating : book.getUserRatings()) {
-                    sb.append(",").append(rating); // No extra text
+                    sb.append(",").append(rating);
                 }
 
                 // Append user reviews
                 for (String review : book.getUserReviews()) {
-                    sb.append(",").append(review); // No extra text
+                    sb.append(",").append(review);
                 }
 
-                writer.write(sb.toString()); // Write the complete line
-                writer.newLine(); // New line for each book entry
+                writer.write(sb.toString());
+                writer.newLine();
             }
         } catch (IOException e) {
-            e.printStackTrace(); // Handle IO exceptions
+            e.printStackTrace(); // Handle file write error
         }
     }
+
     public void loadFromFile() {
         if (currentUser.isEmpty()) {
             return;
@@ -76,13 +77,15 @@ public class PersonalDatabase {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(","); // Split at commas to separate data
-                if (parts.length >= 4) { // Ensure sufficient parts
+                if (parts.length >= 6) { // Ensure sufficient parts for the expected data
                     PersonalBook book = new PersonalBook(parts[0], parts[1]);
                     book.setStatus(parts[2]);
                     book.addTimeSpent(Integer.parseInt(parts[3]));
+                    book.setStartDate(parts[4]);
+                    book.setEndDate(parts[5]);
 
-                    // Separate user ratings and reviews
-                    for (int i = 4; i < parts.length; i++) {
+                    // Process user ratings and reviews
+                    for (int i = 6; i < parts.length; i++) {
                         try {
                             double rating = Double.parseDouble(parts[i]); // Attempt to parse as rating
                             book.addUserRating(rating);
