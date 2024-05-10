@@ -37,6 +37,16 @@ public class GeneralDatabase {
         }
     }
 
+    public void addReviewToGeneralBook(String title, String review) {
+        for (GeneralBook book : books) {
+            if (book.getTitle().equalsIgnoreCase(title)) { // Find the book by title
+                book.addReview(review); // Add the review
+                saveToCSV(); // Save the updated list to the CSV file
+                break;
+            }
+        }
+    }
+
     public void saveToCSV() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(GENERAL_CSV))) {
             writer.write("Title,Author,Average Rating,Rating Count,Reviews"); // CSV header
@@ -59,7 +69,7 @@ public class GeneralDatabase {
                     book.getAuthor(), 
                     ratingDisplay, 
                     ratingCount, 
-                    reviewsDisplay // Added rating count and formatted reviews
+                    reviewsDisplay
                 ));
 
                 writer.newLine(); // Move to the next line

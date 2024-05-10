@@ -14,10 +14,12 @@ public class PersonalDatabaseGUI extends JFrame {
     private PersonalDatabase personalDatabase;
     private GeneralDatabase generalDatabase;
     private Timer readingTimer;
+    private String currentUsername; // To track the current user's name
 
-    public PersonalDatabaseGUI(PersonalDatabase personalDatabase, GeneralDatabase generalDatabase) {
+    public PersonalDatabaseGUI(PersonalDatabase personalDatabase, GeneralDatabase generalDatabase, String currentUsername) {
         this.personalDatabase = personalDatabase;
         this.generalDatabase = generalDatabase;
+        this.currentUsername = currentUsername; // Get the current user's name
 
         setTitle("Personal Database");
         setSize(800, 600);
@@ -80,9 +82,26 @@ public class PersonalDatabaseGUI extends JFrame {
         add(searchPanel, BorderLayout.NORTH); // Search bar at the top
         add(buttonPanel, BorderLayout.SOUTH); // Buttons at the bottom
 
-        setVisible(true);
-        initializeSearchFunctionality();
+        setVisible(true); // Display the interface
+    }
 
+    // Method to populate the personal table with data
+    private void populatePersonalTable() {
+        personalTableModel.setRowCount(0); // Clear existing rows
+
+        for (PersonalBook book : personalDatabase.getPersonalBooks()) {
+            personalTableModel.addRow(new Object[]{
+                book.getTitle(),
+                book.getAuthor(),
+                book.getAverageRating() == -1 ? "No rating" : String.format("%.2f", book.getAverageRating()),
+                book.getStatus(),
+                book.getTimeSpent(),
+                book.getStartDate(),
+                book.getEndDate(),
+                book.getUserRatings().isEmpty() ? "No rating" : String.format("%.2f", book.getUserRatings().get(0)),
+                book.getUserReviews().isEmpty() ? "No reviews" : String.join(", ", book.getUserReviews())
+            });
+        }
     }
 
     // Method to start the reading timer
@@ -96,7 +115,7 @@ public class PersonalDatabaseGUI extends JFrame {
             @Override
             public void run() {
                 book.addTimeSpent(1); // Increment time spent by 1 minute
-                personalDatabase.saveToFile(); 
+                personalDatabase.saveToFile(); // Save to the personal database
                 populatePersonalTable(); // Refresh the table
             }
         }, 60000, 60000); // Schedule every minute
@@ -110,28 +129,54 @@ public class PersonalDatabaseGUI extends JFrame {
         }
     }
 
-    // Method to populate the personal table
-    private void populatePersonalTable() {
-        personalTableModel.setRowCount(0); // Clear existing rows
+    // Method to change the book status
+    private void changeBookStatus() {
+        int selectedRow = personalTable.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Please select a book to change its status.");
+            return;
+        }
 
-        for (PersonalBook book : personalDatabase.getPersonalBooks()) {
-            double userRating = book.getUserRatings().isEmpty() ? -1 : book.getUserRatings().get(0);
+        int modelRowIndex = personalTable.convertRowIndexToModel(selectedRow); // Adjust for sorting
 
-            personalTableModel.addRow(new Object[]{
-                book.getTitle(),
-                book.getAuthor(),
-                book.getAverageRating() == -1 ? "No rating" : String.format("%.2f", book.getAverageRating()),
-                book.getStatus(),
-                book.getTimeSpent(),
-                book.getStartDate(),
-                book.getEndDate(),
-                userRating == -1 ? "No rating" : String.format("%.2f", userRating),
-                book.getUserReviews().isEmpty() ? "No reviews" : String.join(", ", book.getUserReviews())
-            });
+        String title = (String) personalTableModel.getValueAt(modelRowIndex, 0);
+        PersonalBook book = personalDatabase.getPersonalBook(title);
+
+        Object[] statusOptions = {"Not Started", "Ongoing", "Completed"};
+        String newStatus = (String) JOptionPane.showInputDialog(
+            this,
+            "Select a new status:",
+            "Change Status",
+            JOptionPane.QUESTION_MESSAGE,
+            null,
+            statusOptions,
+            book.getStatus() // Default to current status
+        );
+
+        if (newStatus != null) {
+            book.setStatus(newStatus);
+
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy");
+            String currentDate = sdf.format(new Date());
+
+            if (newStatus.equals("Ongoing")) {
+                if (book.getStartDate().equals("N/A")) {
+                    book.setStartDate(currentDate); // Set the start date if not already set
+                }
+
+                startReadingTimer(book); // Start the reading timer
+            } else {
+                stopReadingTimer(); // Stop the reading timer
+                if (newStatus.equals("Completed")) {
+                    book.setEndDate(currentDate); // Set the end date
+                }
+            }
+
+            personalDatabase.saveToFile(); // Save changes to the personal database
+            populatePersonalTable(); // Refresh the table
         }
     }
 
-    // Method to rate a book
     private void rateBook() {
         int selectedRow = personalTable.getSelectedRow();
         if (selectedRow == -1) {
@@ -145,7 +190,7 @@ public class PersonalDatabaseGUI extends JFrame {
         PersonalBook book = personalDatabase.getPersonalBook(title);
 
         String ratingStr = JOptionPane.showInputDialog(this, "Enter your rating (1-5):");
-        
+
         try {
             double rating = Double.parseDouble(ratingStr);
             if (rating < 1 || rating > 5) {
@@ -153,16 +198,15 @@ public class PersonalDatabaseGUI extends JFrame {
                 return;
             }
 
-            book.addUserRating(rating); // Add to user ratings
-            generalDatabase.updateBookRating(book.getTitle(), rating); // Update general database
-            personalDatabase.saveToFile(); 
+            book.addUserRating(rating); // Add user rating
+            generalDatabase.updateBookRating(book.getTitle(), rating); // Update the general database
+            personalDatabase.saveToFile(); // Save to personal database
             populatePersonalTable(); // Refresh the table
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(this, "Invalid rating. Please enter a valid number.");
         }
     }
 
-    // Method to write a review
     private void writeReview() {
         int selectedRow = personalTable.getSelectedRow();
         if (selectedRow == -1) {
@@ -170,7 +214,7 @@ public class PersonalDatabaseGUI extends JFrame {
             return;
         }
 
-        int modelRowIndex = personalTable.convertRowIndexToModel(selectedRow); // Adjust for sorting
+        int modelRowIndex = personalTable.convertRowIndexToModel(selectedRow);
 
         String title = (String) personalTableModel.getValueAt(modelRowIndex, 0);
         PersonalBook book = personalDatabase.getPersonalBook(title);
@@ -178,76 +222,16 @@ public class PersonalDatabaseGUI extends JFrame {
         String reviewText = JOptionPane.showInputDialog(this, "Write your review:");
 
         if (reviewText != null && !reviewText.trim().isEmpty()) {
-            book.addUserReview(reviewText); // Add to user reviews
-            personalDatabase.saveToFile(); // Save to personal database
+            // Prepend the current username to the review text
+            String fullReview = currentUsername + ": " + reviewText;
+
+            book.addUserReview(fullReview); // Add user review
+            generalDatabase.addReviewToGeneralBook(title, fullReview); // Update the general database
+            personalDatabase.saveToFile(); 
             populatePersonalTable(); // Refresh the table
         }
     }
 
-    // Method to change the status of a book
-private void changeBookStatus() {
-    int selectedRow = personalTable.getSelectedRow();
-    if (selectedRow == -1) {
-        JOptionPane.showMessageDialog(this, "Please select a book to change its status.");
-        return;
-    }
-
-    int modelRowIndex = personalTable.convertRowIndexToModel(selectedRow); // Adjust for sorting
-
-    String title = (String) personalTableModel.getValueAt(modelRowIndex, 0);
-    PersonalBook book = personalDatabase.getPersonalBook(title);
-
-    Object[] statusOptions = {"Not Started", "Ongoing", "Completed"};
-    String newStatus = (String) JOptionPane.showInputDialog(
-        this,
-        "Select a new status:",
-        "Change Status",
-        JOptionPane.QUESTION_MESSAGE,
-        null,
-        statusOptions,
-        book.getStatus() // Default to current status
-    );
-
-    if (newStatus != null) {
-        book.setStatus(newStatus);
-
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy");
-        String currentDate = sdf.format(new Date());
-
-        if (newStatus.equals("Ongoing")) {
-            if (book.getStartDate().equals("N/A")) {
-                book.setStartDate(currentDate);
-            }
-
-            startReadingTimer(book); // Start the timer
-        } else {
-            // If the status is not "Ongoing", stop the timer
-            stopReadingTimer();
-            if (newStatus.equals("Completed")) {
-                book.setEndDate(currentDate); // Set end date
-            }
-        }
-
-        personalDatabase.saveToFile(); // Save the updated status
-        populatePersonalTable(); // Refresh the table
-    }
-}
-private void initializeSearchFunctionality() {
-    searchField.addKeyListener(new KeyAdapter() {
-        @Override
-        public void keyReleased(KeyEvent e) {
-            String text = searchField.getText().trim();
-            if (text.isEmpty()) {
-                sorter.setRowFilter(null); // Reset filter
-            } else {
-                // Filter across relevant columns (e.g., Title, Author, Status, etc.)
-                sorter.setRowFilter(RowFilter.regexFilter("(?i)" + text)); // Case-insensitive filtering
-            }
-        }
-    });
-}
-
-    // Method to delete a book from the personal library
     private void deleteBook() {
         int selectedRow = personalTable.getSelectedRow();
         if (selectedRow == -1) {
@@ -255,19 +239,21 @@ private void initializeSearchFunctionality() {
             return;
         }
 
-        int modelRowIndex = personalTable.convertRowIndexToModel(selectedRow); // Adjust for sorting
+        int modelRowIndex = personalTable.convertRowIndexToModel(selectedRow);
 
         String title = (String) personalTableModel.getValueAt(modelRowIndex, 0);
 
-        int confirmDelete = JOptionPane.showConfirmDialog(this, 
-            "Are you sure you want to delete \"" + title + "\" from your personal database?", 
-            "Confirm Deletion", 
-            JOptionPane.YES_NO_OPTION);
+        int confirmDelete = JOptionPane.showConfirmDialog(
+            this,
+            "Are you sure you want to delete \"" + title + "\" from your personal database?",
+            "Confirm Deletion",
+            JOptionPane.YES_NO_OPTION
+        );
 
         if (confirmDelete == JOptionPane.YES_OPTION) {
-            personalDatabase.deletePersonalBook(title); // Delete from personal database
-            personalDatabase.saveToFile(); 
-            populatePersonalTable(); // Refresh the table
+            personalDatabase.deletePersonalBook(title); // Delete from the personal database
+            personalDatabase.saveToFile(); // Save changes
+            populatePersonalTable(); // Refresh the table to reflect the deletion
         }
     }
 }

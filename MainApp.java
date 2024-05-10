@@ -5,6 +5,7 @@ public class MainApp {
     private GeneralDatabase generalDatabase;
     private PersonalDatabase personalDatabase;
     private static final String CURRENT_USER_FILE = "current_user.txt";
+    private String currentUser;
 
     public MainApp() {
         generalDatabase = new GeneralDatabase();
@@ -17,13 +18,13 @@ public class MainApp {
 
     private void initializeLoginPage() {
         // Check if there's a currently logged-in user
-        String loggedInUser = getCurrentLoggedInUser();
-        if (loggedInUser != null) {
+        currentUser = getCurrentLoggedInUser();
+        if (currentUser != null) {
             // Auto-login based on the stored username
-            if (loggedInUser.equals("admin")) {
+            if (currentUser.equals("admin")) {
                 openMainInterface(true); // Admin functionality
             } else {
-                personalDatabase.setUser(loggedInUser);
+                personalDatabase.setUser(currentUser);
                 personalDatabase.loadFromFile(); // Load personal data
                 openMainInterface(false); // Open the main interface for regular users
             }
@@ -37,6 +38,7 @@ public class MainApp {
                 if (isAdmin) {
                     openMainInterface(true); // Admin functionality
                 } else {
+                    currentUser = username; // Store the current username
                     personalDatabase.setUser(username);
                     personalDatabase.loadFromFile(); // Load personal data
                     openMainInterface(false); // Open the main interface for regular users
@@ -53,11 +55,13 @@ public class MainApp {
         mainInterface.setGeneralDatabaseListener(() -> {
             new GeneralDatabaseGUI(generalDatabase, personalDatabase, !isAdmin);
         });
-        
+
         if (isAdmin) {
             mainInterface.setAdminInterfaceListener(() -> new AdminInterface(generalDatabase));
         } else {
-            mainInterface.setPersonalDatabaseListener(() -> new PersonalDatabaseGUI(personalDatabase, generalDatabase)); // Pass the general database reference
+            mainInterface.setPersonalDatabaseListener(() -> {
+                new PersonalDatabaseGUI(personalDatabase, generalDatabase, currentUser); // Include the current username
+            });
         }
 
         mainInterface.setLogoutListener(() -> {
@@ -98,6 +102,6 @@ public class MainApp {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(MainApp::new); // Start the application
+        SwingUtilities.invokeLater(MainApp::new);
     }
 }

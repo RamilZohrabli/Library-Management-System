@@ -12,8 +12,8 @@ public class PersonalBook extends GeneralBook {
         super(title, author);
         this.status = "Not Started";
         this.timeSpent = 0;
-        this.startDate = "N/A"; // Default value indicating no date specified
-        this.endDate = "N/A";   // Default value indicating no date specified
+        this.startDate = "N/A"; 
+        this.endDate = "N/A"; 
         this.userRatings = new ArrayList<>();
         this.userReviews = new ArrayList<>();
     }

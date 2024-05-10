@@ -258,3 +258,4 @@ public class LoginAndRegistrationPage extends JFrame {
         SwingUtilities.invokeLater(() -> new LoginAndRegistrationPage());
     }
 }
+
