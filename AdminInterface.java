@@ -18,47 +18,50 @@ public class AdminInterface extends JFrame {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(new BorderLayout());
 
+        // Table model initialization with uneditable cells
         tableModel = new DefaultTableModel(new Object[]{"Title", "Author"}, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false; // Disable cell editing
+                return false;
             }
         };
 
         generalTable = new JTable(tableModel);
-        generalTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); // Only allow single row selection
+        generalTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         generalTable.setRowSelectionAllowed(true);
 
-        // Prevent key-based deletion or editing
+        // Preventing key-based deletion or editing
         generalTable.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE || e.getKeyCode() == KeyEvent.VK_DELETE) {
-                    e.consume(); // Prevent Backspace and Delete keys from doing anything
+                    e.consume(); // Prevent deletion using keyboard
                 }
             }
         });
 
-        populateTable(); // Populate the initial data
+        populateTable(); // Populate the table with initial data
 
+        // Buttons initialization and listeners
         addBookButton = new JButton("Add Book");
-        deleteBookButton = new JButton("Delete Book");
-        editBookButton = new JButton("Edit Book");
+        addBookButton.addActionListener(e -> addBook()); // Set listener
 
-        addBookButton.addActionListener(e -> addBook());
-        deleteBookButton.addActionListener(e -> deleteBook());
-        editBookButton.addActionListener(e -> editBook());
+        deleteBookButton = new JButton("Delete Book");
+        deleteBookButton.addActionListener(e -> deleteBook()); // Set listener
+
+        editBookButton = new JButton("Edit Book");
+        editBookButton.addActionListener(e -> editBook()); // Set listener
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(addBookButton);
         buttonPanel.add(deleteBookButton);
         buttonPanel.add(editBookButton);
 
-        add(new JScrollPane(generalTable), BorderLayout.CENTER); // Add the table with scroll pane
-        add(buttonPanel, BorderLayout.SOUTH); // Add the buttons to the bottom
+        add(new JScrollPane(generalTable), BorderLayout.CENTER); // Table with scroll pane
+        add(buttonPanel, BorderLayout.SOUTH); // Buttons panel at the bottom
 
-        setLocationRelativeTo(null); // Center the window on the screen
-        setVisible(true);
+        setLocationRelativeTo(null); // Center the window
+        setVisible(true); // Display the interface
     }
 
     private void populateTable() {
@@ -87,9 +90,13 @@ public class AdminInterface extends JFrame {
             String title = titleField.getText();
             String author = authorField.getText();
 
+            if (title.isEmpty() || author.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Both title and author fields must be filled.");
+                return; // Do not add empty fields
+            }
+
             GeneralBook newBook = new GeneralBook(title, author);
-            generalDatabase.getBooks().add(newBook); // Add to the general database
-            generalDatabase.saveToCSV(); // Save the new book to general.csv
+            generalDatabase.addBook(newBook); // Use a new method to add and save
             populateTable(); // Refresh the table
         }
     }
@@ -102,9 +109,20 @@ public class AdminInterface extends JFrame {
         }
 
         String title = (String) tableModel.getValueAt(selectedRow, 0);
-        generalDatabase.getBooks().removeIf(book -> book.getTitle().equals(title)); // Remove from the general database
-        generalDatabase.saveToCSV(); // Save the change to general.csv
-        populateTable(); // Refresh the table
+
+        int confirmDelete = JOptionPane.showConfirmDialog(this, 
+            "Are you sure you want to delete \"" + title + "\"?", 
+            "Confirm Deletion", 
+            JOptionPane.YES_NO_OPTION);
+
+        if (confirmDelete == JOptionPane.YES_OPTION) {
+            boolean isDeleted = generalDatabase.removeBookByTitle(title); // Use a new method to remove and save
+            if (isDeleted) {
+                populateTable(); // Refresh the table
+            } else {
+                JOptionPane.showMessageDialog(this, "Failed to delete the book."); // Handle failure
+            }
+        }
     }
 
     private void editBook() {
@@ -115,6 +133,7 @@ public class AdminInterface extends JFrame {
         }
 
         String originalTitle = (String) generalTable.getValueAt(selectedRow, 0);
+
         GeneralBook bookToEdit = generalDatabase.getBooks()
             .stream()
             .filter(book -> book.getTitle().equals(originalTitle))
@@ -123,7 +142,7 @@ public class AdminInterface extends JFrame {
 
         if (bookToEdit == null) {
             JOptionPane.showMessageDialog(this, "Book not found.");
-            return;
+            return; // If the book is not found, exit
         }
 
         JTextField titleField = new JTextField(bookToEdit.getTitle(), 15);
@@ -141,7 +160,7 @@ public class AdminInterface extends JFrame {
             bookToEdit.setTitle(titleField.getText());
             bookToEdit.setAuthor(authorField.getText());
 
-            generalDatabase.saveToCSV(); // Save changes to general.csv
+            generalDatabase.saveToCSV(); // Save changes
             populateTable(); // Refresh the table
         }
     }

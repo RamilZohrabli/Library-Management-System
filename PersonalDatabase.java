@@ -29,6 +29,10 @@ public class PersonalDatabase {
             .orElse(null);
     }
 
+    public void deletePersonalBook(String title) {
+        personalBooks.removeIf(book -> book.getTitle().equalsIgnoreCase(title));
+    }
+
     public void saveToFile() {
         if (currentUser.isEmpty()) {
             return;

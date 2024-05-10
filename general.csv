@@ -1,106 +1,106 @@
-Title,Author,Rating,Reviews
-Mahabharata [Bhagavad Gita],Unknown,No rating,No Reviews
-Epic of Gilgamesh,Unknown,No rating,No Reviews
-The Old Testament,Unknown,No rating,No Reviews
-Illiad,Homer,No rating,No Reviews
-Odyssey,Homer,No rating,No Reviews
-Histories,Herodotus,No rating,No Reviews
-[Plays],Sophocles,No rating,No Reviews
-[Plays],Aeschyles,No rating,No Reviews
-Hippolytus,Euripides,No rating,No Reviews
-Bachants,Euripides,No rating,No Reviews
-Electra,Euripides,No rating,No Reviews
-The Phornician Women,Euripides,No rating,No Reviews
-The Peloponesian War,Thucydides,No rating,No Reviews
-Dialogues,Plato,No rating,No Reviews
-Poetics,Aristotle,No rating,No Reviews
-Physics,Aristotle,No rating,No Reviews
-Ethics,Aristotle,No rating,No Reviews
-De Anima,Aristotle,No rating,No Reviews
-Greek Anthology,Unknown,No rating,No Reviews
-On The Nature of Things,Lucretius,No rating,No Reviews
-Parallel Lives,Plutarch,No rating,No Reviews
-Aeneid,Virgil,No rating,No Reviews
-Bucolics,Virgil,No rating,No Reviews
-Georgics,Virgil,No rating,No Reviews
-Annals,Tacitus,No rating,No Reviews
-Metamorphoses,Ovid,No rating,No Reviews
-Heroides,Ovid,No rating,No Reviews
-Amores,Ovid,No rating,No Reviews
-The New Testament,Unknown,No rating,No Reviews
-The Twelve Caesars,Suetonius,No rating,No Reviews
-Meditations,Marcus Aurelius,No rating,No Reviews
-[Poems],Catullus,No rating,No Reviews
-[Poems],Horace,No rating,No Reviews
-Discourses,Epictetus,No rating,No Reviews
-[Plays],Aristophanes,No rating,No Reviews
-Historical Miscellany,Aelianus,No rating,No Reviews
-On the Nature of Animals,Aelianus,No rating,No Reviews
-Argonautica,Apollonius Rhodius,No rating,No Reviews
-Fourteen Byzantine Rulers,Michael Psellus,No rating,No Reviews
-The Rise and Fall of the Roman Empire,Edward Gibbon,No rating,No Reviews
-The Enneads,Plotinus,No rating,No Reviews
-Ecclesiastical History,Eusebius,No rating,No Reviews
-Consolations of Philosophy,Boethius,No rating,No Reviews
-Letters,Pliny the Younger,No rating,No Reviews
-Byzantine verse romances,Unknown,No rating,No Reviews
-Fragments,Heraclitus,No rating,No Reviews
-Confessions,St. Augustine,No rating,No Reviews
-Summa Theologica,Thomas Aquinas,No rating,No Reviews
-The Little Flowers,St. Francis of Assisi,No rating,No Reviews
-The Prince,Niccolò Machiavelli,No rating,No Reviews
-Divine Comedy,Dante Alighieri,No rating,No Reviews
-Novelle,Franco Sacchetti,No rating,No Reviews
-Icelandic sagas,Unknown,No rating,No Reviews
-Anthony and Cleopatra,William Shakespeare,No rating,No Reviews
-Hamlet,William Shakespeare,No rating,No Reviews
-Macbeth,William Shakespeare,No rating,No Reviews
-Henry V,William Shakespeare,No rating,No Reviews
-,François Rabelais,No rating,No Reviews
-,Francis Bacon,No rating,No Reviews
-Selected Works,Martin Luther,No rating,No Reviews
-Institutes of the Christian Religion,John Calvin,No rating,No Reviews
-Essays,Michel de Montaigne,No rating,No Reviews
-Don Quixote,Miguel de Cervantes,No rating,No Reviews
-Discourses,René Descartes ,No rating,No Reviews
-Song of Roland,Unknown,No rating,No Reviews
-Beowulf,Unknown,No rating,No Reviews
-,Benvenuto Cellini,No rating,No Reviews
-Education of Henry Adams,Henry Adams,No rating,No Reviews
-The Leviathan,Thomas Hobbes,No rating,No Reviews
-Thoughts,Blaise Pascal,No rating,No Reviews
-Paradise Lost,John Milton,No rating,No Reviews
-,John Donne,No rating,No Reviews
-,Andrew Marvell,No rating,No Reviews
-,George Herbert,No rating,No Reviews
-,Richard Crashaw,No rating,No Reviews
-Treatises,Baruch Spinoza,No rating,No Reviews
-Charterhouse of Parma,Stendhal,No rating,No Reviews
-The Red and the Black,Stendhal,No rating,No Reviews
-The Life of Henry Brulard,Stendhal,No rating,No Reviews
-Gulliver’s Travels,Jonathan Swift,No rating,No Reviews
-Tristram Shandy,Laurence Sterne,No rating,No Reviews
-Dangerous Liaisons,Choderlos de Laclos,No rating,No Reviews
-Persian Letters,Baron de Montesquieu,No rating,No Reviews
-Second Treatise on Government,John Locke,No rating,No Reviews
-The Wealth of Nations,Adam Smith,No rating,No Reviews
-Discourse on Metaphysics,Gottfried Leibniz,No rating,No Reviews
-Everything,David Hume,No rating,No Reviews
-The Federalist Papers,Unknown,No rating,No Reviews
-Critique of Pure Reason,Immanuel Kant,No rating,No Reviews
-Fear and Trembling,Søren Kierkegaard,No rating,No Reviews
-Either/Or,Søren Kierkegaard,No rating,No Reviews
-Philosophical Fragments,Søren Kierkegaard,No rating,No Reviews
-Notes From the Underground,Fyodor Dostoevsky,No rating,No Reviews
-The Possessed,Fyodor Dostoevsky,No rating,No Reviews
-Democracy in America,Alexis de Tocqueville,No rating,No Reviews
-Faust,Johann Wolfgang von Goethe,No rating,No Reviews
-Italian Journey,Johann Wolfgang von Goethe,No rating,No Reviews
-Empire of the Czar,Astolphe-Louis-Léonor,No rating,No Reviews
-Empire of the Czar, Marquis de Custine,No rating,No Reviews
-Mimesis,Eric Auerbach,No rating,No Reviews
-Conquest of Mexico,William H. Prescott,No rating,No Reviews
-Labyrinths of Solitude,Octavio Paz,No rating,No Reviews
-The Logic of Scientific Discovery,Sir Karl Popper,No rating,No Reviews
-The Open Society and Its Enemies,Sir Karl Popper,No rating,No Reviews
-Crowds and Power,Elias Canetti,No rating,No Reviews
+Title,Author,Average Rating,Rating Count,Reviews
+Epic of Gilgamesh,Unknown,No rating,0,No reviews
+The Old Testament,Unknown,No rating,0,No reviews
+Illiad,Homer,No rating,0,No reviews
+Odyssey,Homer,No rating,0,No reviews
+Histories,Herodotus,No rating,0,No reviews
+[Plays],Sophocles,No rating,0,No reviews
+[Plays],Aeschyles,No rating,0,No reviews
+Hippolytus,Euripides,No rating,0,No reviews
+Bachants,Euripides,No rating,0,No reviews
+Electra,Euripides,No rating,0,No reviews
+The Phornician Women,Euripides,No rating,0,No reviews
+The Peloponesian War,Thucydides,No rating,0,No reviews
+Dialogues,Plato,No rating,0,No reviews
+Poetics,Aristotle,No rating,0,No reviews
+Physics,Aristotle,No rating,0,No reviews
+Ethics,Aristotle,No rating,0,No reviews
+De Anima,Aristotle,No rating,0,No reviews
+Greek Anthology,Unknown,No rating,0,No reviews
+On The Nature of Things,Lucretius,No rating,0,No reviews
+Parallel Lives,Plutarch,No rating,0,No reviews
+Aeneid,Virgil,No rating,0,No reviews
+Bucolics,Virgil,No rating,0,No reviews
+Georgics,Virgil,No rating,0,No reviews
+Annals,Tacitus,No rating,0,No reviews
+Metamorphoses,Ovid,No rating,0,No reviews
+Heroides,Ovid,No rating,0,No reviews
+Amores,Ovid,No rating,0,No reviews
+The New Testament,Unknown,No rating,0,No reviews
+The Twelve Caesars,Suetonius,No rating,0,No reviews
+Meditations,Marcus Aurelius,No rating,0,No reviews
+[Poems],Catullus,No rating,0,No reviews
+[Poems],Horace,No rating,0,No reviews
+Discourses,Epictetus,No rating,0,No reviews
+[Plays],Aristophanes,No rating,0,No reviews
+Historical Miscellany,Aelianus,No rating,0,No reviews
+On the Nature of Animals,Aelianus,No rating,0,No reviews
+Argonautica,Apollonius Rhodius,No rating,0,No reviews
+Fourteen Byzantine Rulers,Michael Psellus,No rating,0,No reviews
+The Rise and Fall of the Roman Empire,Edward Gibbon,No rating,0,No reviews
+The Enneads,Plotinus,No rating,0,No reviews
+Ecclesiastical History,Eusebius,No rating,0,No reviews
+Consolations of Philosophy,Boethius,No rating,0,No reviews
+Letters,Pliny the Younger,No rating,0,No reviews
+Byzantine verse romances,Unknown,No rating,0,No reviews
+Fragments,Heraclitus,No rating,0,No reviews
+Confessions,St. Augustine,No rating,0,No reviews
+Summa Theologica,Thomas Aquinas,No rating,0,No reviews
+The Little Flowers,St. Francis of Assisi,No rating,0,No reviews
+The Prince,Niccolò Machiavelli,No rating,0,No reviews
+Divine Comedy,Dante Alighieri,No rating,0,No reviews
+Novelle,Franco Sacchetti,No rating,0,No reviews
+Icelandic sagas,Unknown,No rating,0,No reviews
+Anthony and Cleopatra,William Shakespeare,No rating,0,No reviews
+Hamlet,William Shakespeare,No rating,0,No reviews
+Macbeth,William Shakespeare,No rating,0,No reviews
+Henry V,William Shakespeare,No rating,0,No reviews
+,François Rabelais,No rating,0,No reviews
+,Francis Bacon,No rating,0,No reviews
+Selected Works,Martin Luther,No rating,0,No reviews
+Institutes of the Christian Religion,John Calvin,No rating,0,No reviews
+Essays,Michel de Montaigne,No rating,0,No reviews
+Don Quixote,Miguel de Cervantes,No rating,0,No reviews
+Discourses,René Descartes ,No rating,0,No reviews
+Song of Roland,Unknown,No rating,0,No reviews
+Beowulf,Unknown,No rating,0,No reviews
+,Benvenuto Cellini,No rating,0,No reviews
+Education of Henry Adams,Henry Adams,No rating,0,No reviews
+The Leviathan,Thomas Hobbes,No rating,0,No reviews
+Thoughts,Blaise Pascal,No rating,0,No reviews
+Paradise Lost,John Milton,No rating,0,No reviews
+,John Donne,No rating,0,No reviews
+,Andrew Marvell,No rating,0,No reviews
+,George Herbert,No rating,0,No reviews
+,Richard Crashaw,No rating,0,No reviews
+Treatises,Baruch Spinoza,No rating,0,No reviews
+Charterhouse of Parma,Stendhal,No rating,0,No reviews
+The Red and the Black,Stendhal,No rating,0,No reviews
+The Life of Henry Brulard,Stendhal,No rating,0,No reviews
+Gulliver’s Travels,Jonathan Swift,No rating,0,No reviews
+Tristram Shandy,Laurence Sterne,No rating,0,No reviews
+Dangerous Liaisons,Choderlos de Laclos,No rating,0,No reviews
+Persian Letters,Baron de Montesquieu,No rating,0,No reviews
+Second Treatise on Government,John Locke,No rating,0,No reviews
+The Wealth of Nations,Adam Smith,No rating,0,No reviews
+Discourse on Metaphysics,Gottfried Leibniz,No rating,0,No reviews
+Everything,David Hume,No rating,0,No reviews
+The Federalist Papers,Unknown,No rating,0,No reviews
+Critique of Pure Reason,Immanuel Kant,No rating,0,No reviews
+Fear and Trembling,Søren Kierkegaard,No rating,0,No reviews
+Either/Or,Søren Kierkegaard,No rating,0,No reviews
+Philosophical Fragments,Søren Kierkegaard,No rating,0,No reviews
+Notes From the Underground,Fyodor Dostoevsky,No rating,0,No reviews
+The Possessed,Fyodor Dostoevsky,No rating,0,No reviews
+Democracy in America,Alexis de Tocqueville,No rating,0,No reviews
+Faust,Johann Wolfgang von Goethe,No rating,0,No reviews
+Italian Journey,Johann Wolfgang von Goethe,No rating,0,No reviews
+Empire of the Czar,Astolphe-Louis-Léonor,No rating,0,No reviews
+Empire of the Czar, Marquis de Custine,No rating,0,No reviews
+Mimesis,Eric Auerbach,No rating,0,No reviews
+Conquest of Mexico,William H. Prescott,No rating,0,No reviews
+Labyrinths of Solitude,Octavio Paz,No rating,0,No reviews
+The Logic of Scientific Discovery,Sir Karl Popper,No rating,0,No reviews
+The Open Society and Its Enemies,Sir Karl Popper,No rating,0,No reviews
+Crowds and Power,Elias Canetti,No rating,0,No reviews
+Hitler,BY ME,No rating,0,No reviews
