@@ -5,7 +5,6 @@ import java.awt.event.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Timer;
-import java.util.TimerTask;
 
 public class PersonalDatabaseGUI extends JFrame {
     private JTable personalTable;
@@ -184,50 +183,53 @@ public class PersonalDatabaseGUI extends JFrame {
     }
 
     // Method to change the status of a book
-    private void changeBookStatus() {
-        int selectedRow = personalTable.getSelectedRow();
-        if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(this, "Please select a book to change its status.");
-            return;
-        }
+private void changeBookStatus() {
+    int selectedRow = personalTable.getSelectedRow();
+    if (selectedRow == -1) {
+        JOptionPane.showMessageDialog(this, "Please select a book to change its status.");
+        return;
+    }
 
-        int modelRowIndex = personalTable.convertRowIndexToModel(selectedRow); // Adjust for sorting
+    int modelRowIndex = personalTable.convertRowIndexToModel(selectedRow); // Adjust for sorting
 
-        String title = (String) personalTableModel.getValueAt(modelRowIndex, 0);
-        PersonalBook book = personalDatabase.getPersonalBook(title);
+    String title = (String) personalTableModel.getValueAt(modelRowIndex, 0);
+    PersonalBook book = personalDatabase.getPersonalBook(title);
 
-        Object[] statusOptions = {"Not Started", "Ongoing", "Completed"};
-        String newStatus = (String) JOptionPane.showInputDialog(
-            this,
-            "Select a new status:",
-            "Change Status",
-            JOptionPane.QUESTION_MESSAGE,
-            null,
-            statusOptions,
-            book.getStatus() // Default to current status
-        );
+    Object[] statusOptions = {"Not Started", "Ongoing", "Completed"};
+    String newStatus = (String) JOptionPane.showInputDialog(
+        this,
+        "Select a new status:",
+        "Change Status",
+        JOptionPane.QUESTION_MESSAGE,
+        null,
+        statusOptions,
+        book.getStatus() // Default to current status
+    );
 
-        if (newStatus != null) {
-            book.setStatus(newStatus);
+    if (newStatus != null) {
+        book.setStatus(newStatus);
 
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy");
-            String currentDate = sdf.format(new Date());
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy");
+        String currentDate = sdf.format(new Date());
 
-            if (newStatus.equals("Ongoing")) {
-                if (book.getStartDate().equals("N/A")) {
-                    book.setStartDate(currentDate);
-                }
-
-                startReadingTimer(book); // Start the timer
-            } else if (newStatus.equals("Completed")) {
-                book.setEndDate(currentDate);
-                stopReadingTimer(); // Stop the timer
+        if (newStatus.equals("Ongoing")) {
+            if (book.getStartDate().equals("N/A")) {
+                book.setStartDate(currentDate);
             }
 
-            personalDatabase.saveToFile(); 
-            populatePersonalTable(); // Refresh the table
+            startReadingTimer(book); // Start the timer
+        } else {
+            // If the status is not "Ongoing", stop the timer
+            stopReadingTimer();
+            if (newStatus.equals("Completed")) {
+                book.setEndDate(currentDate); // Set end date
+            }
         }
+
+        personalDatabase.saveToFile(); // Save the updated status
+        populatePersonalTable(); // Refresh the table
     }
+}
 
     // Method to delete a book from the personal library
     private void deleteBook() {
