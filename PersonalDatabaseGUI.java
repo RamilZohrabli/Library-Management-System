@@ -81,6 +81,8 @@ public class PersonalDatabaseGUI extends JFrame {
         add(buttonPanel, BorderLayout.SOUTH); // Buttons at the bottom
 
         setVisible(true);
+        initializeSearchFunctionality();
+
     }
 
     // Method to start the reading timer
@@ -229,6 +231,20 @@ private void changeBookStatus() {
         personalDatabase.saveToFile(); // Save the updated status
         populatePersonalTable(); // Refresh the table
     }
+}
+private void initializeSearchFunctionality() {
+    searchField.addKeyListener(new KeyAdapter() {
+        @Override
+        public void keyReleased(KeyEvent e) {
+            String text = searchField.getText().trim();
+            if (text.isEmpty()) {
+                sorter.setRowFilter(null); // Reset filter
+            } else {
+                // Filter across relevant columns (e.g., Title, Author, Status, etc.)
+                sorter.setRowFilter(RowFilter.regexFilter("(?i)" + text)); // Case-insensitive filtering
+            }
+        }
+    });
 }
 
     // Method to delete a book from the personal library

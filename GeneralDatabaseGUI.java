@@ -92,8 +92,22 @@ public class GeneralDatabaseGUI extends JFrame {
         add(bottomPanel, BorderLayout.SOUTH); // Add buttons at the bottom
 
         setVisible(true);
+        initializeSearchFunctionality();
     }
-
+    private void initializeSearchFunctionality() {
+        searchField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                String text = searchField.getText().trim();
+                if (text.isEmpty()) {
+                    sorter.setRowFilter(null); // Reset filter
+                } else {
+                    // Filter across all columns (e.g., Title, Author)
+                    sorter.setRowFilter(RowFilter.regexFilter("(?i)" + text)); // Case-insensitive filtering
+                }
+            }
+        });
+    }
     private void populateTable(List<GeneralBook> books) {
         tableModel.setRowCount(0); // Clear existing rows
 
@@ -141,4 +155,9 @@ public class GeneralDatabaseGUI extends JFrame {
 
         JOptionPane.showMessageDialog(this, "Book added to your personal library.");
     }
+    
+
+
+
+
 }
