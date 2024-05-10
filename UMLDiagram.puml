@@ -1,0 +1,117 @@
+@startuml Book Management Application
+skinparam classAttributeIconSize 0
+
+class GeneralBook {
+    -String title
+    -String author
+    -double averageRating
+    -int ratingCount
+    -List<String> reviews
+    +String getTitle()
+    +String getAuthor()
+    +double getAverageRating()
+    +int getRatingCount()
+    +List<String> getReviews()
+    +void addReview(String review)
+    +void addRating(double rating)
+    +void setTitle(String title)
+    +void setAuthor(String author)
+}
+
+class GeneralDatabase {
+    -List<GeneralBook> books
+    +List<GeneralBook> getBooks()
+    +void addBook(GeneralBook book)
+    +boolean removeBookByTitle(String title)
+    +void saveToCSV()
+    +void loadFromCSV()
+}
+
+class AdminInterface {
+    -GeneralDatabase generalDatabase
+    -JTable generalTable
+    -DefaultTableModel tableModel
+    +void populateTable()
+    +void addBook()
+    +void deleteBook()
+    +void editBook()
+}
+
+class GeneralDatabaseGUI {
+    -JTable table
+    -DefaultTableModel tableModel
+    -TableRowSorter<DefaultTableModel> sorter
+    +void populateTable(List<GeneralBook> books)
+    +void addBookToPersonalLibrary(PersonalDatabase personalDatabase)
+}
+
+class LoginAndRegistrationPage {
+    -Map<String, String> userDatabase
+    -Map<String, String> adminCredentials
+    -JTextField usernameField
+    -JPasswordField passwordField
+    +void login()
+    +void register()
+}
+
+class MainApp {
+    -GeneralDatabase generalDatabase
+    -PersonalDatabase personalDatabase
+    -String currentUser
+    +void initializeLoginPage()
+    +void openMainInterface(boolean isAdmin)
+    +void saveCurrentUser(String username)
+}
+
+class MainInterface {
+    -JButton generalDatabaseButton
+    -JButton personalDatabaseButton
+    -JButton adminInterfaceButton
+    -JButton logoutButton
+    +void setGeneralDatabaseListener(Runnable listener)
+    +void setPersonalDatabaseListener(Runnable listener)
+}
+
+class PersonalBook {
+    -String status
+    -int timeSpent
+    -String startDate
+    -String endDate
+    -List<Double> userRatings
+    -List<String> userReviews
+    +void addUserRating(double rating)
+    +void addUserReview(String review)
+}
+
+class PersonalDatabase {
+    -List<PersonalBook> personalBooks
+    -String currentUser
+    +List<PersonalBook> getPersonalBooks()
+    +void addPersonalBook(PersonalBook book)
+    +PersonalBook getPersonalBook(String title)
+}
+
+class PersonalDatabaseGUI {
+    -JTable personalTable
+    -DefaultTableModel personalTableModel
+    -TableRowSorter<DefaultTableModel> sorter
+    +void rateBook()
+    +void writeReview()
+}
+
+GeneralBook <|-- PersonalBook
+GeneralDatabase *- GeneralBook
+GeneralDatabase <--> AdminInterface
+GeneralDatabase <--> GeneralDatabaseGUI
+PersonalDatabase <--> GeneralDatabase
+PersonalDatabase <--> PersonalDatabaseGUI
+MainApp --> GeneralDatabase
+MainApp --> PersonalDatabase
+MainApp --> LoginAndRegistrationPage
+MainApp --> MainInterface
+MainInterface <--> GeneralDatabase
+MainInterface <--> PersonalDatabase
+MainInterface <--> AdminInterface
+MainInterface <--> GeneralDatabaseGUI
+MainInterface <--> PersonalDatabaseGUI
+@enduml
