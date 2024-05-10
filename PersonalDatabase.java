@@ -2,7 +2,7 @@ import java.io.*;
 import java.util.*;
 
 public class PersonalDatabase {
-    private List<PersonalBook> personalBooks;
+    private List<PersonalBook> personalBooks; 
     private String currentUser;
 
     public PersonalDatabase() {
@@ -10,35 +10,40 @@ public class PersonalDatabase {
         currentUser = "";
     }
 
-    public List<PersonalBook> getPersonalBooks() {
-        return new ArrayList<>(personalBooks);
-    }
-
     public void setUser(String username) {
         this.currentUser = username;
+        loadFromFile(); // Load the user's personal books
+    }
+
+    public List<PersonalBook> getPersonalBooks() {
+        return new ArrayList<>(personalBooks); // Return a copy for safety
     }
 
     public void addPersonalBook(PersonalBook book) {
         personalBooks.add(book);
+        saveToFile(); // Save the updated personal database
     }
 
     public PersonalBook getPersonalBook(String title) {
         return personalBooks.stream()
-            .filter(book -> book.getTitle().equalsIgnoreCase(title))
+            .filter(book -> book.getTitle().equalsIgnoreCase(title)) // Case-insensitive match
             .findFirst()
             .orElse(null);
     }
 
     public void deletePersonalBook(String title) {
-        personalBooks.removeIf(book -> book.getTitle().equalsIgnoreCase(title));
+        boolean removed = personalBooks.removeIf(book -> book.getTitle().equalsIgnoreCase(title));
+        if (removed) {
+            saveToFile(); // Only save if something was removed
+        }
     }
 
     public void saveToFile() {
         if (currentUser.isEmpty()) {
-            return;
+            return; // If there's no current user, don't save
         }
 
-        String filePath = currentUser + ".csv";
+        String filePath = currentUser + ".csv"; // Filename based on the current user
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
             for (PersonalBook book : personalBooks) {
@@ -61,27 +66,27 @@ public class PersonalDatabase {
                     sb.append(",").append(review);
                 }
 
-                writer.write(sb.toString());
-                writer.newLine();
+                writer.write(sb.toString()); // Write to the CSV file
+                writer.newLine(); // Move to the next line
             }
         } catch (IOException e) {
-            e.printStackTrace(); // Handle file write error
+            e.printStackTrace(); // Handle potential IO exceptions
         }
     }
 
     public void loadFromFile() {
         if (currentUser.isEmpty()) {
-            return;
+            return; // If there's no current user, there's nothing to load
         }
 
-        String filePath = currentUser + ".csv";
-        personalBooks.clear();
+        String filePath = currentUser + ".csv"; // Filename based on the current user
+        personalBooks.clear(); // Clear any existing data
 
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(","); // Split at commas to separate data
-                if (parts.length >= 6) { // Ensure sufficient parts for the expected data
+                if (parts.length >= 6) { // Ensure enough parts for expected data
                     PersonalBook book = new PersonalBook(parts[0], parts[1]);
                     book.setStatus(parts[2]);
                     book.addTimeSpent(Integer.parseInt(parts[3]));
@@ -94,15 +99,15 @@ public class PersonalDatabase {
                             double rating = Double.parseDouble(parts[i]); // Attempt to parse as rating
                             book.addUserRating(rating);
                         } catch (NumberFormatException ex) {
-                            book.addUserReview(parts[i]); // Otherwise, treat as review
+                            book.addUserReview(parts[i]); // Otherwise, treat as a review
                         }
                     }
 
-                    personalBooks.add(book);
+                    personalBooks.add(book); // Add the book to the list
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace(); // Handle potential IO errors
+            e.printStackTrace(); // Handle potential IO exceptions
         }
     }
 }
