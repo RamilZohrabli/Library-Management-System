@@ -8,7 +8,6 @@ This project is a Book Library Management System implemented in Java with a grap
 - [Classes and Structure](#classes-and-structure)
 - [Getting Started](#getting-started)
 - [Usage](#usage)
-- [License](#license)
 
 ## Project Overview
 The system has two primary users: admins and regular users. Admins have elevated permissions to manage the general book database, while regular users can maintain their personal libraries and interact with the general database. The project is designed with multiple Java classes that define the behavior and relationships among different components.
