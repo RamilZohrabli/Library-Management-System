@@ -47,5 +47,4 @@ To run the project, follow these steps:
 - **Regular Users**: After logging in as a regular user, you can view the general database and manage your personal library. You can add books to your library, rate them, write reviews, and track your reading progress.
 - **Logout**: To log out, use the "Logout" button in the Main Interface.
 
-## License
-This project is licensed under the MIT License. See the `LICENSE` file for details.
+
