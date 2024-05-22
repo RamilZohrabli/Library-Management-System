@@ -8,7 +8,6 @@ This project is a Book Library Management System implemented in Java with a grap
 - [Classes and Structure](#classes-and-structure)
 - [Getting Started](#getting-started)
 - [Usage](#usage)
-- [License](#license)
 
 ## Project Overview
 The system has two primary users: admins and regular users. Admins have elevated permissions to manage the general book database, while regular users can maintain their personal libraries and interact with the general database. The project is designed with multiple Java classes that define the behavior and relationships among different components.
@@ -47,5 +46,4 @@ To run the project, follow these steps:
 - **Regular Users**: After logging in as a regular user, you can view the general database and manage your personal library. You can add books to your library, rate them, write reviews, and track your reading progress.
 - **Logout**: To log out, use the "Logout" button in the Main Interface.
 
-## License
-This project is licensed under the MIT License. See the `LICENSE` file for details.
+
