@@ -85,90 +85,78 @@ public class LoginAndRegistrationPage extends JFrame {
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
         titleLabel.setFont(new Font("Verdana", Font.BOLD, 36));
         titleLabel.setForeground(new Color(102, 0, 204)); // Purple color
-    
+
         JLabel usernameLabel = new JLabel("Username:");
         usernameLabel.setFont(new Font("Verdana", Font.PLAIN, 18));
         usernameLabel.setForeground(new Color(102, 0, 204)); // Purple color
-    
+
         usernameField = new JTextField(15);
         usernameField.setFont(new Font("Verdana", Font.PLAIN, 18));
-    
+
         JLabel passwordLabel = new JLabel("Password:");
         passwordLabel.setFont(new Font("Verdana", Font.PLAIN, 18));
         passwordLabel.setForeground(new Color(102, 0, 204)); // Purple color
-    
+
         passwordField = new JPasswordField(15);
         passwordField.setFont(new Font("Verdana", Font.PLAIN, 18));
-    
+
         JButton loginButton = new JButton("Login");
         loginButton.setFont(new Font("Verdana", Font.BOLD, 20));
         loginButton.setForeground(Color.BLACK);
         loginButton.setBackground(new Color(102, 0, 204)); // Purple color
         loginButton.addActionListener(e -> login());
-    
+
         JButton registerButton = new JButton("Register");
         registerButton.setFont(new Font("Verdana", Font.BOLD, 20));
         registerButton.setForeground(Color.BLACK);
         registerButton.setBackground(new Color(153, 51, 255)); // Lighter purple color
         registerButton.addActionListener(e -> register());
-    
+
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBorder(BorderFactory.createEmptyBorder(50, 50, 50, 50));
         panel.setBackground(new Color(255, 230, 168));
-    
+
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 2;
         gbc.insets = new Insets(0, 0, 30, 0); // Space between elements
         panel.add(titleLabel, gbc);
-    
+
         gbc.gridy = 1;
         gbc.gridwidth = 1;
         gbc.insets = new Insets(0, 0, 10, 0); // Consistent spacing
         panel.add(usernameLabel, gbc);
-    
+
         gbc.gridx = 1;
         gbc.insets = new Insets(0, 0, 10, 0);
         panel.add(usernameField, gbc);
-    
+
         gbc.gridy = 2;
         gbc.gridx = 0;
         gbc.insets = new Insets(0, 0, 10, 0);
         panel.add(passwordLabel, gbc);
-    
+
         gbc.gridx = 1;
         panel.add(passwordField, gbc);
-    
+
         gbc.gridy = 3;
         gbc.gridx = 0;
         gbc.gridwidth = 2;
         gbc.insets = new Insets(20, 0, 20, 0);
         panel.add(loginButton, gbc);
-    
+
         gbc.gridy = 4;
         gbc.insets = new Insets(10, 0, 10, 0);
         panel.add(registerButton, gbc);
-    
-        // "Change Language" button with a shorter length
-        JButton languageChangeButton = new JButton("Change Language");
-        languageChangeButton.setFont(new Font("Verdana", Font.BOLD, 20));
-        languageChangeButton.setForeground(Color.BLACK);
-        languageChangeButton.setBackground(new Color(102, 0, 204)); // Purple color
-        gbc.gridx = 0;
-        gbc.gridy = 5;
-        gbc.gridwidth = 2; // Centered across the panel
-        gbc.insets = new Insets(20, 0, 20, 0); // Consistent spacing
-        
-        // Shorten the length of the button
-        languageChangeButton.setPreferredSize(new Dimension(250, 40)); // Shortened length, same height
-        panel.add(languageChangeButton, gbc);
-    
-        add(panel); // Add the panel to the frame
+
+        // Add the panel to the frame
+        add(panel);
     }
-    
-    
-    
+
+
+
+
     private void login() {
         String username = usernameField.getText(); // Capture the username
         String password = String.valueOf(passwordField.getPassword());
